@@ -69,8 +69,8 @@ AppAsset::register($this);
             $help_mnu_itms[] =['label' => '<span class="glyphicon glyphicon-menu-right"></span> ติดต่อ', 'url' => ['/site/about']];
 
             if (!Yii::$app->user->isGuest) {
-                $risk_mnu_itms[] = ['label' => '<span class="glyphicon glyphicon-saved"></span> ลงทะเบียนความเสี่ยง *สิทธิ์ rm', 'url' => ['risk/register'],'visible' => !Yii::$app->user->isGuest && Yii::$app->user->identity->role == 2];
-                $risk_mnu_itms[] = ['label' => '<span class="glyphicon glyphicon-eye-open"></span> ทบทวนความเสี่ยง *สิทธิ์ rm', 'url' => ['risk/review'],'visible' => !Yii::$app->user->isGuest && Yii::$app->user->identity->role == 2];
+                $risk_mnu_itms[] = ['label' => '<span class="glyphicon glyphicon-saved"></span> ตรวจสอบความเสี่ยง', 'url' => ['risk/approve'],'visible' => !Yii::$app->user->isGuest && Yii::$app->user->identity->role != 3 ];
+                $risk_mnu_itms[] = ['label' => '<span class="glyphicon glyphicon-thumbs-up"></span> ทบทวนความเสี่ยง', 'url' => ['risk/review'],'visible' => !Yii::$app->user->isGuest && Yii::$app->user->identity->role != 3 ];
             }
 
             $menuItems = [

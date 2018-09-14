@@ -12,17 +12,10 @@ use yii\helpers\Url;
 /* @var $searchModel frontend\models\RiskSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'ความเสี่ยง';
+$this->title = 'ตรวจสอบความเสี่ยง';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="risk-index">   
-
-    <p>
-        <?= Html::a('<i class="glyphicon glyphicon-send"></i> รายงานความเสี่ยง', ['create'], ['class' => 'btn btn-success']) ?>
-        <?= Html::a('<i class="glyphicon glyphicon-search"></i> ค้นหาชื่อความเสี่ยง', ['searchrisk'], ['class' => 'btn btn-warning']) ?>
-
-    </p>
-      
 <?php Pjax::begin(); ?>    
     <?= GridView::widget([
             'dataProvider' => $dataProvider,
@@ -60,7 +53,7 @@ $this->params['breadcrumbs'][] = $this->title;
         // set your toolbar
             'toolbar' =>  [
                 ['content' => 
-                    Html::a('<i class="glyphicon glyphicon-repeat"></i>', ['index'], ['data-pjax' => 0, 'class' => 'btn btn-default', 'title' => Yii::t('app', 'รีเซ็ต')])
+                    Html::a('<i class="glyphicon glyphicon-repeat"></i>', ['risk/approve'], ['data-pjax' => 0, 'class' => 'btn btn-default', 'title' => Yii::t('app', 'รีเซ็ต')])
                 ],
                 '{toggleData}',
                 '{export}',
@@ -77,9 +70,21 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
+            [
+            'header' => 'ระดับ',
+            'attribute' => 'level_id'
+            ],
             'date_report',
-            'durationname',
-            'programname',
+            [
+            'header' => 'เวลา',
+            'attribute' => 'time_report'
+            ],
+            [
+            'header' => 'เวร',
+            'attribute' => 'durationname'
+            ],
+            
+           // 'programname',
            
              //'time_report',
             [
@@ -89,30 +94,33 @@ $this->params['breadcrumbs'][] = $this->title;
                         'style'=>'max-width:1000px; overflow: auto; white-space: normal; word-wrap: break-word;'
                     ],
             ],
+            //'detail_hosxp:ntext',
+            //'departgroupname',
+            //'departname',
             [
-                    'attribute' => 'detail',
+                    'attribute' => 'departname',
                     'format' => 'raw',
                     'contentOptions' => [
                         'style'=>'max-width:1000px; overflow: auto; white-space: normal; word-wrap: break-word;'
                     ],
             ],
-             'level_id',
-            //'detail_hosxp:ntext',
-            //'departgroupname',
-            //'departname',
             //'locationname',
             //'irdepname',
             //'user_ir_type',
             //'user_ir',
             //'program_id',
             //'affected',
-            'edit',
+            [
+            'header' => 'แก้ปัญหา',
+            'attribute' => 'edit'
+            ],
             //'problem_basic:ntext',
             //'image:ntext',
             //'inform_id',
            // 'status_risk',
+            //'loginname',
             [
-                'label' => 'สถานะการรายงาน',
+                'label' => 'สถานะ',
                 'attribute' => 'status_risk',
                 'format' => 'raw',
                 'filter' => false,
@@ -120,14 +128,23 @@ $this->params['breadcrumbs'][] = $this->title;
                 'vAlign' => 'middle',
                 #'format' => ['decimal', 2],
                 'value' => function($data) {
-                        if ($data['status_risk'] == 'รายงาน') {
-                            return '<i class="glyphicon glyphicon-ok"></i>..รายงานแล้ว';
+                        if ($data['status_risk'] == 'ตรวจสอบ') {
+                            return '<i class="glyphicon glyphicon-ok"></i>';
                         } else {
-                            return '<i class="glyphicon glyphicon-remove"></i>..รายงานไม่สำเร็จ';
+                            return '<i class="glyphicon glyphicon-remove"></i> รอ...ตรวจสอบ';
                         }
                     },
-                ],
-            //'loginname',
+            ],
+                              [
+                //'attribute' => 'ลงทะเบียน',
+               'label' => 'Register',
+                'format' => 'raw',
+                'value' => function($data) {
+                    return
+                        Html::a('<i class="glyphicon glyphicon-send"></i> Send', ['riskregister/send','id' => $data->id], ['class' => 'btn btn-danger btn-xs']);
+                }
+            ],
+           
             //'created_by',
             //'updated_by',
             //'create_date',
@@ -138,31 +155,17 @@ $this->params['breadcrumbs'][] = $this->title;
                 'class' => 'kartik\grid\ActionColumn',
                 'header' => 'Action', 
                 //'buttonOptions'=>['class'=>'btn btn-default'],
-                'template'=>'{view} {update} {delete}',
-             /*   'visibleButtons' => [
-                    'view' => function ($model) {
-                        return $model->status_risk == 'รายงาน';
-                    },
+                'template'=>'{update}',
+                'visibleButtons' => [
                     'update' => function ($model) {
-                        return $model->status_risk == 'รายงาน';
+                        return $model->status_risk == 'ลงทะเบียน';
                     },
-                    'delete' => function ($model) {
-                        return $model->status_risk == 'รายงาน';
-                    },
-                ], */
+
+                ], 
                 'visible'=> Yii::$app->user->isGuest ? false : true,
                 'buttons'=>[
-                    'view'=>function ($url, $model,$key) {
-                        $t = 'index.php?r=risk/view&id='.$model->id;
-                            return Html::a('<i class="glyphicon glyphicon-eye-open"></i>',$url,['class'=>'btn btn-success btn-xs']);
-                    },
-                    'update'=>function ($url, $model,$key) {
-                        $t = 'index.php?r=risk/update&id='.$model->id;
-                            return Html::a('<i class="glyphicon glyphicon-pencil"></i>',$url,['class'=>'btn btn-warning btn-xs']);
-                    },
-                    'delete'=>function ($url, $model,$key) {
-                        $t = 'index.php?r=risk/delete&id='.$model->id;
-                            return Html::a('<i class="glyphicon glyphicon-trash"></i>',$url,['class'=>'btn btn-danger btn-xs']);
+                    'update'=>function($url,$model,$key){                        
+                        return  Html::a('<i class="glyphicon glyphicon-check"></i> Approve', ['riskregister/update', 'id' => $model->id], ['class' => 'btn btn-primary btn-xs']);
                     },
                   ]
             ],
@@ -175,9 +178,9 @@ $this->params['breadcrumbs'][] = $this->title;
   <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
   <h4><b class="text-red">หมายเหตุ : </b></h4>
     <ol>
-        <li class="list-group-item-info"> รายการความเสี่ยงในหน้านี้ จะแสดงเฉพาะ ของตัวเองรายงาน ไม่ว่าจะรายงานต้นเองหรือรายงานผู้อื่น</li>
-        <li class="list-group-item-info"> รายการความเสี่ยงในหน้านี้จะแสดงเฉพาะที่มีสถานนะ "รายงาน" เท่านั้น</li>
-        <li class="list-group-item-danger"> กำลังปรับปรุงให้แผนกตัวเองเห็นรายงานความเสี่ยงทั้งหมดแต่ไม่สามารถแก้ไขหรือลบของผู้อื่นได้ สามารถดูได้อย่างเดี่ยว</li>
+        <li class="list-group-item-info"> หลังจากกด send ข้อมูลจากตาราง risk จะ ถูก insert ไปยังตาราง riskregister
+            [มีฟิวเพิ่ม User_import,date_import,status_approve,data_approve,date_approve,sendto_user,sentto_tem,sendto_dep และ update status_risk='ตรวจสอบ']
+            ,และ insert ฟิว status_risk='ตรวจสอบ' where id=id </li>
     </ol>
 </div>
 

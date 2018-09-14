@@ -70,7 +70,7 @@ class Risk extends \yii\db\ActiveRecord
             [['date_report', 'time_report','user_ir_type', 'level_id', 'riskstore_id', 'inform_id'], 'required'],
             [['date_report', 'time_report', 'create_date', 'modify_date'], 'safe'],
             [['duration_id', 'location_id', 'user_ir', 'program_id', 'riskstore_id', 'inform_id', 'created_by', 'updated_by'], 'integer'],
-            [['detail', 'detail_hosxp', 'problem_basic'], 'string'],
+            [['department_id','detail', 'detail_hosxp', 'problem_basic'], 'string'],
             [['user_ir_type'], 'string', 'max' => 50],
             [['edit'], 'string', 'max' => 10],
             [['level_id'], 'string', 'max' => 2],
@@ -134,6 +134,7 @@ class Risk extends \yii\db\ActiveRecord
             'inform_id' => 'ที่มาของรายงาน',
             'status_risk' => 'สถานะความเสี่ยง',
             'created_by' => 'บันทึกโดย',
+            'department_id' => 'สังกัดแผนก',
             'updated_by' => 'อับเดทโดย',
             'create_date' => 'วันบันทึก',
             'modify_date' => 'วันปรับปรุง',
@@ -146,7 +147,7 @@ class Risk extends \yii\db\ActiveRecord
             'informname' => 'ที่มาของรายงาน',
             'locationname' => 'สถานที่พบเหตุ',
             'storename' => 'ชื่อความเสี่ยง',
- 
+            'departname' => 'แผนก',
             'irtypename' => 'ประเภทการรายงาน',
             'irdepname' => 'แผนกที่รายงานถึง',
             
@@ -157,7 +158,16 @@ class Risk extends \yii\db\ActiveRecord
             'updatename' => 'อับเดทโดย',
         ];
     }
+ 
+// get ชื่อแผนก  
+    public function getDepart() {
+        return @$this->hasOne(Department::className(), ['id' => 'department_id']);
+    }
 
+    public function getDepartname() {
+        return @$this->depart->depart_name;
+    }
+    
  // get ชื่อเวร 
     public function getDuration() {
         return @$this->hasOne(Duration::className(), ['id' => 'duration_id']);

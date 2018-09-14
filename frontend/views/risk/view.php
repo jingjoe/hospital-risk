@@ -55,6 +55,7 @@ $this->params['breadcrumbs'][] = ['label' => 'ความเสี่ยง', '
                     'informname',
                     'status_risk',
                     'loginname',
+                    'departname',
                     'updatename',
                     'create_date',
                     'modify_date',

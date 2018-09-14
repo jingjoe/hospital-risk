@@ -3,6 +3,7 @@
 namespace frontend\controllers;
 
 use Yii;
+use yii\db\Query;
 use frontend\models\Risk;
 use frontend\models\RiskSearch;
 use yii\data\ActiveDataProvider;
@@ -58,7 +59,7 @@ class RiskController extends Controller
         }
         $arr = ['index'];
         if ($role != 99) {
-            $arr = ['index', 'view', 'create', 'update', 'delete', 'searchrisk'];
+            $arr = ['index','approve', 'view', 'create', 'update', 'delete', 'searchrisk'];
         }
         return [
             'verbs' => [
@@ -72,7 +73,7 @@ class RiskController extends Controller
                 'ruleConfig' => [
                     'class' => AccessRule::className(),
                 ],
-                'only' => ['index', 'view', 'create', 'update', 'delete','searchrisk'],
+                'only' => ['index', 'approve','view', 'create', 'update', 'delete','searchrisk'],
                 'rules' => [
                     [
                         'allow' => true,
@@ -95,10 +96,9 @@ class RiskController extends Controller
 
     public function actionIndex()
     {
-        
         $id_r= Yii::$app->user->identity->id; 
+        
         $searchModel = new RiskSearch();
-
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->query->andWhere(['status_risk'=>'รายงาน','created_by'=> $id_r ]); //  ดึงเฉพาะที่ risk status = รายงาน และ ตรวจสอบผู้ใช้ให้แสดงข้อมูลเฉพาะของตัวเอง
         $dataProvider->pagination->pageSize=100;
@@ -112,6 +112,7 @@ class RiskController extends Controller
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            
         ]);
     }
 
@@ -137,6 +138,12 @@ class RiskController extends Controller
     {
         $model = new Risk();
         
+        $cid_r= Yii::$app->user->identity->cid;
+        $sql = Yii::$app->db->createCommand("SELECT department_id FROM member  WHERE cid='$cid_r'")->queryOne();
+        $dep_id =  $sql['department_id'];
+        
+        $model->department_id = $dep_id; 
+   
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
         //if ($model->load(Yii::$app->request->post()) && $model->save()) {
             $model->image = $model->uploadMultiple($model,'image');
@@ -148,7 +155,7 @@ class RiskController extends Controller
                 $model->duration_id = 1; 
                 $model->user_ir_type = 2; 
                 $model->edit = 'ได้'; 
-               //$model->affected = 'อื่นๆ'; 
+               
                 return $this->render('create', [
                  'model' => $model,
                  'riskse' =>[],
@@ -171,6 +178,12 @@ class RiskController extends Controller
 
         $riskse = ArrayHelper::map($this->GetRisk($model->program_id),'id','name');
         $level = ArrayHelper::map($this->GetLevel($model->level_id),'id','name');
+        
+        $cid_r= Yii::$app->user->identity->cid;
+        $sql = Yii::$app->db->createCommand("SELECT department_id FROM member  WHERE cid='$cid_r'")->queryOne();
+        $dep_id =  $sql['department_id'];
+        
+        $model->department_id = $dep_id; 
 
        // if ($model->load(Yii::$app->request->post()) && $model->save()) {
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
@@ -186,6 +199,36 @@ class RiskController extends Controller
             'level' =>$level,
         ]);
     }
+    
+      public function actionUpdate2($id)
+    {
+        $model = $this->findModel($id);
+        $model->affectedToArray();
+
+        $riskse = ArrayHelper::map($this->GetRisk($model->program_id),'id','name');
+        $level = ArrayHelper::map($this->GetLevel($model->level_id),'id','name');
+        
+        $cid_r= Yii::$app->user->identity->cid;
+        $sql = Yii::$app->db->createCommand("SELECT department_id FROM member  WHERE cid='$cid_r'")->queryOne();
+        $dep_id =  $sql['department_id'];
+        
+        $model->department_id = $dep_id; 
+
+       // if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+              $model->image = $model->uploadMultiple($model,'image');
+              $model->save();
+            Yii::$app->session->setFlash('success', 'แก้ไขข้อมูลเรียบร้อยแล้ว');
+            return $this->redirect('index.php?r=risk/index');
+        }
+
+        return $this->render('update2', [
+            'model' => $model,
+            'riskse' => $riskse,
+            'level' =>$level,
+        ]);
+    }
+
 
     /**
      * Deletes an existing Risk model.
@@ -294,5 +337,26 @@ class RiskController extends Controller
         ]);
         return $this->render('searchrisk', [
             'dataProvider' => $dataProvider]);
+    }
+    
+        public function actionApprove()
+    {
+        
+        $searchModel = new RiskSearch();
+
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider->query->andWhere(['status_risk'=>'รายงาน']); //  ดึงเฉพาะที่ risk status = รายงาน เพื่อมาตรวจสอบ และ ส่งให้หน่วย/ทีมทบทวน
+        $dataProvider->pagination->pageSize=100;
+        
+        $dataProvider->sort->enableMultiSort = true;
+        $dataProvider->sort->defaultOrder = [
+                 'level_id' => SORT_DESC,
+               //'create_date' => SORT_ASC, 
+        ];
+        
+        return $this->render('approve', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
     }
 }
