@@ -9,6 +9,10 @@ use yii\db\Query;
 use yii\bootstrap\Modal;
 use yii\helpers\Url;
 
+use frontend\models\Program;
+use frontend\models\Level;
+use frontend\models\Team;
+
 /* @var $this yii\web\View */
 /* @var $searchModel frontend\models\RiskstoreSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -42,7 +46,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <br>
     <?= GridView::widget([
             'dataProvider' => $dataProvider,
-           /// 'filterModel' => $searchModel,
+            'filterModel' => $searchModel,
             'headerRowOptions' => ['style' => 'background-color:#cccccc'],
             'panel'=>[
                   'type'=>GridView::TYPE_DEFAULT,
@@ -101,11 +105,67 @@ $this->params['breadcrumbs'][] = $this->title;
                     ],
                 ],
                 //'typename',
-                'programname',
+                //'programname',
+                
+                [
+                    'attribute' => 'program_id',
+                    'value' => 'program.program_name',
+                    'label' => 'โปรแกรมเชื่อมโยง',
+                    'width' => '150px',
+                    'filterType' => GridView::FILTER_SELECT2,
+                    'filter' => Program::GetListName(),
+                    'filterWidgetOptions' => [
+                        'pluginOptions' => ['allowClear' => true],
+                        ],
+                    'filterInputOptions' => ['placeholder' => 'กรุณาเลือก'],
+                        //  'group' => true,
+                ],
                 //'groupname',
-                'levelcode',
-                'teamname',
-                'create_date',
+                //'levelcode',
+                [
+                    'attribute' => 'level_id',
+                    'value' => 'level.level_code',
+                    'label' => 'ระดับ',
+                    'width' => '150px',
+                    'filterType' => GridView::FILTER_SELECT2,
+                    'filter' => Level::GetListName(),
+                    'filterWidgetOptions' => [
+                        'pluginOptions' => ['allowClear' => true],
+                        ],
+                    'filterInputOptions' => ['placeholder' => 'กรุณาเลือก'],
+                        //  'group' => true,
+                ],
+                //'teamname',
+                [
+                    'attribute' => 'team_id',
+                    'value' => 'team.team_name',
+                    'label' => 'ทีมนำ',
+                    'width' => '150px',
+                    'filterType' => GridView::FILTER_SELECT2,
+                    'filter' => Team::GetListName(),
+                    'filterWidgetOptions' => [
+                        'pluginOptions' => ['allowClear' => true],
+                        ],
+                    'filterInputOptions' => ['placeholder' => 'กรุณาเลือก'],
+                        //  'group' => true,
+                ],
+               // 'create_date',
+                [
+                    'attribute'=>'create_date',
+                    'value' => function ($model, $index, $widget) {
+                        return Yii::$app->formatter->asDate($model->create_date);
+                    },
+                    'filterType' => GridView::FILTER_DATE,
+                    'filterWidgetOptions' => [
+                        'pluginOptions' => [
+                            'format' => 'yyyy-mm-dd',
+                            'autoclose' => true,
+                            'todayHighlight' => true,
+                        ]
+                    ],
+                    'width' => '200px',
+                    'hAlign' => 'center',
+                ],
                 [
                 'label' => 'สถานะ',
                 'attribute' => 'status',

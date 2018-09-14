@@ -63,7 +63,7 @@ AppAsset::register($this);
             $risk_mnu_itms[] = ['label' => '<span class="glyphicon glyphicon-floppy-saved"></span> รายงานความเสี่ยง', 'url' => ['risk/index']];
             $risk_mnu_itms[] = ['label' => '<span class="glyphicon glyphicon-bell"></span> ติดตามความเสี่ยง', 'url' => ['risk/follow']];
 
-
+            $help_mnu_itms[] =['label' => '<span class="glyphicon glyphicon-menu-right"></span> ประวัติการปรับปรุงโปรแกรม','url' => ['/historyview/index']];
             $help_mnu_itms[] =['label' => '<span class="glyphicon glyphicon-menu-right"></span> คู่มือการใช้งาน','url' => ['help/manual']];
             $help_mnu_itms[] =['label' => '<span class="glyphicon glyphicon-menu-right"></span> ความรู้เรื่องความเสี่ยง','url' => ['help/books']];
             $help_mnu_itms[] =['label' => '<span class="glyphicon glyphicon-menu-right"></span> ติดต่อ', 'url' => ['/site/about']];
@@ -89,6 +89,7 @@ AppAsset::register($this);
                         ['label' => '<span class="glyphicon glyphicon-menu-right"></span> ทีมนำโรงพยาบาล','url' => ['team/index']],
                         ['label' => '<span class="glyphicon glyphicon-menu-right"></span> ข้อมูลบุคลากร','url' => ['member/index']],
                         ['label' => '<span class="glyphicon glyphicon-menu-right"></span> เวรทำการ','url' => ['duration/index']],
+                        ['label' => '<span class="glyphicon glyphicon-menu-right"></span> ประวัติการปรับปรุง','url' => ['history/index']],
                      '<li class="divider"></li>',
                      //'<li class="dropdown-header">จัดการสมาชิก</li>',
                         ['label' => '<span class="glyphicon glyphicon-menu-right"></span> จัดการผู้ใช้งาน','url' => ['/user/admin/index']],
