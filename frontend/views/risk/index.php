@@ -8,6 +8,11 @@ use yii\db\Query;
 
 use yii\bootstrap\Modal;
 use yii\helpers\Url;
+
+use frontend\models\Program;
+use frontend\models\Riskstore;
+use frontend\models\Duration;
+use frontend\models\Level;
 /* @var $this yii\web\View */
 /* @var $searchModel frontend\models\RiskSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -16,12 +21,14 @@ $this->title = 'ความเสี่ยง';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="risk-index">   
-
+   
     <p>
-        <?= Html::a('<i class="glyphicon glyphicon-send"></i> รายงานความเสี่ยง', ['create'], ['class' => 'btn btn-success']) ?>
-        <?= Html::a('<i class="glyphicon glyphicon-search"></i> ค้นหาชื่อความเสี่ยง', ['searchrisk'], ['class' => 'btn btn-warning']) ?>
+        <?= Html::a('<i class="glyphicon glyphicon-send"></i> รายงานความเสี่ยง', ['create'], ['class' => 'btn btn-success', 'title' => 'รายงานความเสี่ยง']) ?>
+        
+        <?= Html::a('<i class="glyphicon glyphicon-search"></i> ค้นหาชื่อความเสี่ยง', ['risk/searchrisk'],['class' => ' btn btn-warning' , 'title' => 'ค้นหาชื่อความเสี่ยง']) ?>
 
     </p>
+
       
 <?php Pjax::begin(); ?>    
     <?= GridView::widget([
@@ -78,10 +85,12 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
             'date_report',
-            'durationname',
+            [
+            'header' => 'เวร',
+            'attribute' => 'durationname'
+            ],
             'programname',
-           
-             //'time_report',
+           //'time_report',
             [
                     'attribute' => 'storename',
                     'format' => 'raw',
@@ -96,7 +105,10 @@ $this->params['breadcrumbs'][] = $this->title;
                         'style'=>'max-width:1000px; overflow: auto; white-space: normal; word-wrap: break-word;'
                     ],
             ],
-             'level_id',
+            [
+            'header' => 'ระดับ',
+            'attribute' => 'level_id'
+            ],
             //'detail_hosxp:ntext',
             //'departgroupname',
             //'departname',
@@ -106,13 +118,16 @@ $this->params['breadcrumbs'][] = $this->title;
             //'user_ir',
             //'program_id',
             //'affected',
-            'edit',
+            [
+            'header' => 'แก้',
+            'attribute' => 'edit'
+            ],
             //'problem_basic:ntext',
             //'image:ntext',
             //'inform_id',
            // 'status_risk',
             [
-                'label' => 'สถานะการรายงาน',
+                'label' => 'สถานะ',
                 'attribute' => 'status_risk',
                 'format' => 'raw',
                 'filter' => false,
@@ -171,6 +186,7 @@ $this->params['breadcrumbs'][] = $this->title;
     ]); ?>
 <?php Pjax::end(); ?>
 </div>
+
 <div class="alert alert-success alert-dismissible" role="alert">
   <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
   <h4><b class="text-red">หมายเหตุ : </b></h4>

@@ -3,6 +3,28 @@
 namespace frontend\models;
 
 use Yii;
+use yii\helpers\Url;
+use yii\db\Expression;
+use yii\helpers\Html;
+use yii\helpers\ArrayHelper;
+use yii\behaviors\TimestampBehavior;
+use yii\behaviors\BlameableBehavior;
+use yii\behaviors\AttributeBehavior;
+use \yii\db\ActiveRecord;
+use yii\web\UploadedFile;
+
+use dektrium\user\models\User;
+
+use frontend\models\Riskstore;
+use frontend\models\Levelwarning;
+use frontend\models\Duration;
+use frontend\models\Location;
+use frontend\models\Department;
+use frontend\models\Program;
+use frontend\models\Level;
+use frontend\models\Inform;
+use frontend\models\Team;
+use frontend\models\Member;
 
 /**
  * This is the model class for table "riskregister".
@@ -32,7 +54,7 @@ use Yii;
  * @property string $create_date วันบันทึก
  * @property string $modify_date วันปรับปรุง
  * @property string $send_date วันที่นำเข้าข้อมูล
- * @property int $send_use ผู้ลงทะเบียน
+ * @property string $send_use ผู้ลงทะเบียน
  * @property string $register_date วันที่ตรวจสอบ
  * @property string $note Note
  * @property int $sendto_team_id ส่งให้ทีม
@@ -41,9 +63,10 @@ use Yii;
  */
 class Riskregister extends \yii\db\ActiveRecord
 {
-    /**
-     * @inheritdoc
-     */
+    
+    const DOC_PATH  = 'riskimage';
+    public $foler_upload ='riskimage';
+    
     public static function tableName()
     {
         return 'riskregister';
@@ -55,20 +78,51 @@ class Riskregister extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id_risk', 'date_report', 'time_report', 'user_ir_type', 'level_id', 'riskstore_id', 'inform_id', 'department_id', 'note', 'sendto_team_id', 'sendto_department_id', 'sendto_member_cid'], 'required'],
-            [['id_risk', 'duration_id', 'location_id', 'user_ir', 'program_id', 'riskstore_id', 'inform_id', 'created_by', 'updated_by', 'send_use', 'sendto_team_id'], 'integer'],
-            [['date_report', 'time_report', 'create_date', 'modify_date', 'send_date', 'register_date'], 'safe'],
-            [['detail', 'detail_hosxp', 'problem_basic', 'image'], 'string'],
-            [['user_ir_type', 'affected'], 'string', 'max' => 50],
+            [['id_risk', 'date_report', 'time_report', 'user_ir_type', 'level_id', 'riskstore_id', 'inform_id', 'department_id','register_date'], 'required'],
+            [['id_risk', 'duration_id', 'location_id', 'user_ir', 'program_id', 'riskstore_id', 'inform_id', 'created_by', 'updated_by', 'sendto_team_id'], 'integer'],
+            [['affected','date_report', 'time_report', 'create_date', 'modify_date', 'send_date'], 'safe'],
+            [['detail', 'detail_hosxp', 'problem_basic','url'], 'string'],
+            [['user_ir_type'], 'string', 'max' => 50],
             [['level_id'], 'string', 'max' => 2],
             [['edit'], 'string', 'max' => 10],
             [['status_risk'], 'string', 'max' => 100],
-            [['department_id', 'sendto_department_id'], 'string', 'max' => 3],
+            [['department_id', 'sendto_department_id','repeat_code'], 'string', 'max' => 3],
+            [['send_use'], 'string', 'max' => 150],
             [['note'], 'string', 'max' => 255],
             [['sendto_member_cid'], 'string', 'max' => 13],
+            [['image'], 'file',
+              'skipOnEmpty' => true,
+              'maxFiles' => 3,
+              'extensions' => 'png,jpg,gif'
+            ],
         ];
     }
-
+    public function behaviors()
+    {
+        return [
+            [
+            'class' => TimestampBehavior::className(),
+            'createdAtAttribute' => 'create_date',
+            'updatedAtAttribute' => 'modify_date',
+            'value' => new Expression('NOW()'),
+            ],
+            [  
+            'class' => BlameableBehavior::className(),
+            'createdByAttribute' => 'created_by',
+            'updatedByAttribute' => 'updated_by',
+            ],  
+            [
+            'class' => AttributeBehavior::className(),
+            'attributes' => [
+                ActiveRecord::EVENT_BEFORE_INSERT => 'affected',
+                ActiveRecord::EVENT_BEFORE_UPDATE => 'affected',
+            ],
+            'value' => function ($event) {
+                return implode(',', $this->affected);
+            },
+        ],
+        ];
+    }
     /**
      * @inheritdoc
      */
@@ -86,7 +140,7 @@ class Riskregister extends \yii\db\ActiveRecord
             'program_id' => 'โปรแกรมความเสี่ยง',
             'level_id' => 'ระดับความรุนแรง',
             'riskstore_id' => 'ชื่อความเสี่ยง',
-            'detail' => 'เหตุการ/รายละเอียดเพิ่มเติม',
+            'detail' => 'เหตุการณ์/รายละเอียดเพิ่มเติม',
             'detail_hosxp' => 'รายละเอียดข้อมูลคนไข้',
             'affected' => 'ผู้เสียหาย/ได้รับผลกระทบ',
             'edit' => 'การแก้ปัญหา',
@@ -106,15 +160,261 @@ class Riskregister extends \yii\db\ActiveRecord
             'sendto_team_id' => 'ส่งให้ทีม',
             'sendto_department_id' => 'ส่งให้แผนก',
             'sendto_member_cid' => 'ส่งให้ผู้รับผิดชอบ',
+            'repeat_code' => 'ระดับการทบทวน',
+            'url' => 'ลิงค์',
+            
+        // เพิ่มฟิวล์ใหม่ จาก funtion get  relation
+            'storename' => 'ชื่อความเสี่ยง',
+            'repeatname' => 'ระดับการทบทวน',
+            'durationname' => 'เวรที่เกิด',
+            'locationname' => 'สถานที่พบเหตุ',
+            'irtypename' => 'ประเภทการรายงาน',
+            'departname' => 'แผนก',
+            'programname' => 'โปรแกรมความเสี่ยง',
+            'levelname' => 'ระดับความรุนแรง',
+            'affectedname' => 'ผู้เสียหาย/ได้รับผลกระทบ',
+            'irdepname' => 'แผนกที่รายงานถึง',
+            'loginname' => 'รายงานโดย',
+            'updatename' => 'อับเดทโดย',
+            'teamname' => 'ส่งให้ทีม',
+            'sdepartname' => 'ส่งให้แผนก',
+            'smembername'=> 'ส่งให้ผู้รับผิดชอบ',
+            'informname' =>'ที่มาของรายงานความเสี่ยง',
+
         ];
     }
 
-    /**
-     * @inheritdoc
-     * @return RiskregisterQuery the active query used by this AR class.
-     */
-    public static function find()
+// get ชื่อความเสี่ยงจากระบบ 
+    public function getRiskstore() {
+        return @$this->hasOne(Riskstore::className(), ['riskstore_id' => 'riskstore_id']);
+    }
+    public function getStorename() {
+        return @$this->riskstore->riskstore_name;
+    }  
+
+ // get ระดับการทบทวน
+    public function getRepeat() {
+        return @$this->hasOne(Levelwarning::className(), ['warning_code' => 'repeat_code']);
+    }
+    public function getRepeatname() {
+        return @$this->repeat->warning_name;
+  
+    }
+ // get ชื่อเวร 
+    public function getDuration() {
+        return @$this->hasOne(Duration::className(), ['id' => 'duration_id']);
+    }
+    public function getDurationname() {
+        return @$this->duration->duration_name;
+    }
+ // get ชื่อสถานที่ 
+    public function getLocation() {
+        return @$this->hasOne(Location::className(), ['id' => 'location_id']);
+    }
+    public function getLocationname() {
+        return @$this->location->name;
+    } 
+
+// get ชื่อแผนก  
+    public function getDepart() {
+        return @$this->hasOne(Department::className(), ['id' => 'department_id']);
+    }
+
+    public function getDepartname() {
+        return @$this->depart->depart_name;
+    }
+ // get โปรแกรมความเสี่ยง 
+    public function getProgram() {
+        return @$this->hasOne(Program::className(), ['program_id' => 'program_id']);
+    }
+    public function getProgramname() {
+        return @$this->program->program_name;
+    }
+ // get ระดับความรุนแรง
+    public function getLevel() {
+        return @$this->hasOne(Level::className(), ['level_code' => 'level_id']);
+    }
+    public function getLevelname() {
+        return @$this->level->level_name;
+    } 
+    
+ // get ที่มาของรายงาน 
+    public function getInform() {
+        return @$this->hasOne(Inform::className(), ['id' => 'inform_id']);
+    }
+    public function getInformname() {
+        return @$this->inform->inform_name;
+    }
+    
+// get แผนกที่รายงานถึง
+    public function getIrdep() {
+        return @$this->hasOne(Department::className(), ['id' => 'user_ir']);
+    }
+    public function getIrdepname() {
+        return @$this->irdep->depart_name;
+    }
+ // get ชื่อผู้บันทึก 
+    public function getLogin() {
+        return @$this->hasOne(User::className(), ['id' => 'created_by']);
+    }
+    public function getLoginname() {
+        return @$this->login->username;
+    }
+    
+// get ชื่อผู้อับเดท 
+    public function getUpdate() {
+        return @$this->hasOne(User::className(), ['id' => 'updated_by']);
+    }
+    public function getUpdatename() {
+        return @$this->update->username;
+    }
+
+// get ชื่อทีมนำ ที่ส่งความเสี่ยงทบทวน  
+    public function getTeam() {
+        return @$this->hasOne(Team::className(), ['id' => 'sendto_team_id']);
+    }
+    public function getTeamname() {
+        return @$this->team->team_name;
+    }
+    
+// get ชื่อแผนกที่ส่งความเสี่ยงทบทวน  
+    public function getSdepart() {
+        return @$this->hasOne(Department::className(), ['id' => 'sendto_department_id']);
+    }
+
+    public function getSdepartname() {
+        return @$this->sdepart->depart_name;
+    }
+    
+// get ชื่อแผนกที่ส่งความเสี่ยงทบทวน  
+    public function getSmember() {
+        return @$this->hasOne(Member::className(), ['cid' => 'sendto_member_cid']);
+    }
+    public function getSmembername() {
+        return @$this->smember->member_name;
+    }
+    
+    
+ //  สร้างรายการให้เลือก itemAlias  radioList  
+
+    public static function itemAlias($type,$code=NULL) {
+        $_items = array(
+            'edit' => array(
+                'ได้' => 'ได้',
+                'ไม่ได้' => 'ไม่ได้',
+            ),
+            'irtype' => array(
+                '1' => 'รายงานต้นเอง',
+                '2' => 'รายงานผู้อื่น',
+            ),
+            'affected'=>[
+                'ผู้ป่วย' => 'ผู้ป่วย',
+                'ญาติ' => 'ญาติ',
+                'เจ้าหน้าที่' => 'เจ้าหน้าที่',
+                'โรงพยาบาล' => 'โรงพยาบาล',
+                'ชุมชน' => 'ชุมชน',
+                'อื่นๆ' => 'อื่นๆ'
+            ],
+
+        );    
+        if (isset($code)){
+            return isset($_items[$type][$code]) ? $_items[$type][$code] : false;
+        }
+        else{         
+            return isset($_items[$type]) ? $_items[$type] : false;    
+        }
+        
+    } 
+    
+//แปลง string ในฟิวด์ skill เป็น array
+    public function affectedToArray(){
+        return $this->affected = explode(',', $this->affected);
+    }
+// ดึงค่า  จาก itemsAlias
+    public function getItemAffected(){
+        return self::itemsAlias('affected');
+    } 
+    public function getAffectedName(){
+        $affected = $this->getItemAffected();
+        $affectedSelected = explode(',', $this->affected);
+        $affectedSelectedName = [];
+        foreach ($affected as $key => $affectedName) {
+          foreach ($affectedSelected as $affectedKey) {
+            if($key === $affectedKey){
+              $affectedSelectedName[] = $affectedName;
+            }
+          }
+        }
+
+        return implode(', ', $affectedSelectedName);
+    }    
+    
+    public function getItemIrtype(){
+        return self::itemsAlias('irtype');
+    }
+
+    public function getIrtypename(){
+        return ArrayHelper::getValue($this->getItemIrtype(),$this->user_ir_type);
+    }
+    
+// funtion Part Upload file
+
+    public function getUploadPath(){
+      return Yii::getAlias('@webroot').'/'.$this->foler_upload.'/';
+    }
+
+    public function getUploadUrl(){
+      return Yii::getAlias('@web').'/'.$this->foler_upload.'/';
+    }
+
+    public function getPhotoViewer(){
+      return empty($this->files) ? Yii::getAlias('@web').'/images/none.png' : $this->getUploadUrl().$this->files;
+    }
+
+// funtion Multiple Upload file
+    public function uploadMultiple($model,$attribute)
     {
-        return new RiskregisterQuery(get_called_class());
+      $image  = UploadedFile::getInstances($model, $attribute);
+      $path = $this->getUploadPath();
+      if ($this->validate() && $image !== null) {
+          $filenames = [];
+          foreach ($image as $file) {
+                  $filename = md5($file->baseName.time()) . '.' . $file->extension;
+                  if($file->saveAs($path . $filename)){
+                    $filenames[] = $filename;
+                  }
+          }
+          if($model->isNewRecord){
+            return implode(',', $filenames);
+          }else{
+            return implode(',',(ArrayHelper::merge($filenames,$model->getOwnPhotosToArray())));
+          }
+      }
+
+      return $model->isNewRecord ? false : $model->getOldAttribute($attribute);
+    }
+
+
+    public function getPhotosViewer(){
+      $image = $this->image ? @explode(',',$this->image) : [];
+      $img = '';
+      foreach ($image as  $image) {
+        $img.= ' '.Html::img($this->getUploadUrl().$image,['class'=>'img-thumbnail','style'=>'max-width:300px;']);
+      }
+      return $img;
+    }
+
+    public function getOwnPhotosToArray()
+    {
+      return $this->getOldAttribute('image') ? @explode(',',$this->getOldAttribute('image')) : [];
+    }
+    
+ // funtion File Part ในการdownload
+        public static function getFilesPath(){
+        return Yii::getAlias('@webroot').'/'.self::DOC_PATH;
+    }
+
+    public static function getFilesUrl(){
+        return Url::base(true).'/'.self::DOC_PATH;
     }
 }

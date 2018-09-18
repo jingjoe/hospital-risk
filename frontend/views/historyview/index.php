@@ -2,7 +2,7 @@
 use yii\helpers\Html;
 
 $this->title = 'ประวัติการปรับปรุงโปรแกรม';
-$this->params['breadcrumbs'][] = $this->title;
+//$this->params['breadcrumbs'][] = $this->title;
 ?>
     <div class="panel panel-success">
         <div class="panel-heading"><span class="glyphicon glyphicon-book" aria-hidden="true"></span> ประวัติการปรับปรุงโปรแกรม </div>

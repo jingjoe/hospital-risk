@@ -25,9 +25,9 @@ class Hospital extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['hoscode', 'hosname', 'address', 'tel', 'active_code'], 'required'],
+            [['hoscode', 'hosname', 'address', 'tel'], 'required'],
             [['hoscode', 'created_by', 'updated_by'], 'integer'],
-            [['website', 'active_code'], 'string'],
+            [['website', 'linetoken','linenotify','sendmail'], 'string'],
             [['create_date', 'modify_date'], 'safe'],
             [['hosname'], 'string', 'max' => 150],
             [['address', 'email'], 'string', 'max' => 200],
@@ -66,14 +66,18 @@ class Hospital extends \yii\db\ActiveRecord
             'fax' => 'แฟกซ์',
             'email' => 'อีเมล์',
             'website' => 'เว็บไซต์',
-            'active_code' => 'รหัสยืนยัน',
+            'linetoken' => 'Line Token',
+            'linenotify'=> 'แจ้งเตือนความเสี่ยงผ่าน Line Notify',
+            'sendmail'=> 'แจ้งเตือนความเสี่ยงผ่าน eMail',
             'create_date' => 'วันบันทึก',
             'modify_date' => 'วันปรับปรุง',
             'created_by' => 'บันทึกโดย',
             'updated_by' => 'อับเดทโดย',
-            // เพิ่มฟิวล์ใหม่ จาก funtion get  relation  
+        // เพิ่มฟิวล์ใหม่ จาก funtion get  relation  
             'loginname' => 'ผู้บันทึก',
-            'updatename' => 'ผู้อับเดท'
+            'updatename' => 'ผู้อับเดท',
+            'linename' => 'แจ้งเตือนความเสี่ยงผ่าน Line Notify',
+            'mailname' => 'แจ้งเตือนความเสี่ยงผ่าน eMail',
         ];
     }
     // get ชื่อผู้บันทึก
@@ -89,5 +93,37 @@ class Hospital extends \yii\db\ActiveRecord
     }
     public function getUpdatename() {
         return @$this->update->username;
+    }
+
+//  สร้างรายการให้เลือก itemAlias  radioList  
+    public static function itemAlias($type,$code=NULL) {
+        $_items = array(
+            'line' => array(
+                '1' => 'แจ้งเตือน',
+                '2' => 'ไม่แจ้งเตือน',
+           
+            ),
+            'mail' => array(
+                '1' => 'แจ้งเตือน',
+                '2' => 'ไม่แจ้งเตือน',
+            ),
+
+
+        );    
+        if (isset($code)){
+            return isset($_items[$type][$code]) ? $_items[$type][$code] : false;
+        }
+        else{         
+            return isset($_items[$type]) ? $_items[$type] : false;    
+        }
+        
+    } 
+    
+    public function getItemprior(){
+        return self::itemsAlias('prior');
+    }
+
+    public function getPriorname(){
+        return ArrayHelper::getValue($this->getItemprior(),$this->priority);
     }
 }

@@ -193,6 +193,7 @@ use frontend\models\Inform;
         'pluginOptions' => [
             'initialPreview' => empty($model->image) ? [] : [
                 Yii::getAlias('@web') . '/riskimage/' . $model->image,
+                //Url::to(Yii::getAlias('@web') . '/riskimage/' . $model->image, true),
             ],
             'allowedFileExtensions' => ['gif', 'jpg', 'png'],
             'showPreview' => true,

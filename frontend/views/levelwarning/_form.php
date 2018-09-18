@@ -12,7 +12,7 @@ use yii\widgets\ActiveForm;
 
     <?php $form = ActiveForm::begin(); ?>
     
-    <?= $form->field($model, 'warning_code')->textInput(['placeholder' => 'ระบุเป็น L00-L99','maxlength' => true]) ?>
+    <?= $form->field($model, 'warning_code')->textInput(['placeholder' => 'ระบุเป็น RV1-RV9','maxlength' => true]) ?>
    
      <?= $form->field($model, 'warning_name')->textInput(['maxlength' => true]) ?>
 

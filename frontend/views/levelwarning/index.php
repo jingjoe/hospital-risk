@@ -14,7 +14,7 @@ use yii\helpers\Url;
 /* @var $searchModel frontend\models\LevelwarningSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'ข้อมูลระดับการแจ้งเตือน';
+$this->title = 'ข้อมูลการทบทวน';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="levelwarning-index">
@@ -44,7 +44,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'headerRowOptions' => ['style' => 'background-color:#cccccc'],
             'panel'=>[
                 'type'=>GridView::TYPE_DEFAULT,
-                'before'=>Html::button('<i class="glyphicon glyphicon-plus"></i> เพิ่มข้อมูล',  ['value' => Url::to(['levelwarning/create']), 'title' => 'เพิ่มระดับการแจ้งเตือน', 'class' => 'showModalButton btn btn-success']),
+                'before'=>Html::button('<i class="glyphicon glyphicon-plus"></i> เพิ่มข้อมูล',  ['value' => Url::to(['levelwarning/create']), 'title' => 'เพิ่มระดับการทบทวน', 'class' => 'showModalButton btn btn-success']),
                 //'heading'=>'สถานที่เกิดความเสี่ยง',
                 //'after' => 'วันที่ประมวลผล '.date('Y-m-d H:i:s').' น.',
                 //'footer'=>true
@@ -104,15 +104,15 @@ $this->params['breadcrumbs'][] = $this->title;
                 'buttons'=>[
                     'view'=>function ($url, $model) {
                         $t = 'index.php?r=levelwarning/view&id='.$model->id;
-                        return Html::button('<span class="glyphicon glyphicon-eye-open"></span>', ['value'=>Url::to($t), 'title' => 'ดูข้อมูลระดับการแจ้งเตือน', 'class' => 'showModalButton btn btn-success btn-xs']);
+                        return Html::button('<span class="glyphicon glyphicon-eye-open"></span>', ['value'=>Url::to($t), 'title' => 'ดูข้อมูลระดับการทบทวน', 'class' => 'showModalButton btn btn-success btn-xs']);
                     },
                     'update'=>function ($url, $model) {
                         $t = 'index.php?r=levelwarning/update&id='.$model->id;
-                        return Html::button('<span class="glyphicon glyphicon-pencil"></span>', ['value'=>Url::to($t), 'title' => 'แก้ไขข้อมูลระดับการแจ้งเตือน','data-pjax' => 0,'data-pjax' => 0,'class' => 'showModalButton btn btn-warning btn-xs']);
+                        return Html::button('<span class="glyphicon glyphicon-pencil"></span>', ['value'=>Url::to($t), 'title' => 'แก้ไขข้อมูลระดับการทบทวน','data-pjax' => 0,'data-pjax' => 0,'class' => 'showModalButton btn btn-warning btn-xs']);
                     },
                     'delete'=>function ($url, $model) {
                             $t = 'index.php?r=levelwarning/delete&id='.$model->id;
-                            return Html::button('<span class="glyphicon glyphicon-trash"></span>', ['value'=>Url::to($t), 'title' => 'ลบข้อมูลระดับการแจ้งเตือน','data-pjax' => 0,'data-pjax' => 0,'class' => 'showModalButton btn btn-danger btn-xs']);
+                            return Html::button('<span class="glyphicon glyphicon-trash"></span>', ['value'=>Url::to($t), 'title' => 'ลบข้อมูลระดับการทบทวน','data-pjax' => 0,'data-pjax' => 0,'class' => 'showModalButton btn btn-danger btn-xs']);
                     }
                 ],
             ],

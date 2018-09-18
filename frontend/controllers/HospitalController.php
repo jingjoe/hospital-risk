@@ -109,6 +109,8 @@ class HospitalController extends Controller
             Yii::$app->session->setFlash('success', 'เพิ่มข้อมูลเรียบร้อยแล้ว');
             return $this->redirect('index.php?r=hospital/index');
         } else {
+             $model->linenotify = 2; 
+             $model->sendmail = 2; 
             return $this->renderAjax('create', [
                 'model' => $model,
             ]);

@@ -24,6 +24,14 @@ $this->params['breadcrumbs'][] = ['label' => 'ข้อมูลบุคลา�
             'cid',
             'departname',
             'positionname',
+          /*[
+                'attribute'=>'priority',
+                'filter'=> frontend\models\Member::itemsAlias('priority'),
+                'value'=>function($model){
+                  return $model->priorname;
+                }
+            ], */
+            'priority',
             'teamname',
             'create_date',
             'modify_date',

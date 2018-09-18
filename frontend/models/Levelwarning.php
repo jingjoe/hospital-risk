@@ -62,8 +62,8 @@ class Levelwarning extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'warning_code' => 'รหัสการเตือน',
-            'warning_name' => 'รายละเอียดการเตือน',
+            'warning_code' => 'รหัสการทบทวน',
+            'warning_name' => 'ระดับการทบทวน',
             'create_date' => 'วันบันทึก',
             'modify_date' => 'วันปรับปรุง',
             'created_by' => 'บันทึกโดย',

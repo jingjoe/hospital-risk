@@ -138,8 +138,8 @@ class Risk extends \yii\db\ActiveRecord
             'updated_by' => 'อับเดทโดย',
             'create_date' => 'วันบันทึก',
             'modify_date' => 'วันปรับปรุง',
-        // เพิ่มฟิวล์ใหม่ จาก funtion get  relation
             
+        // เพิ่มฟิวล์ใหม่ จาก funtion get  relation
             'typename' => 'ประเภทความเสี่ยง',
             'durationname' => 'เวรที่เกิด',
             'programname' => 'โปรแกรมความเสี่ยง',
@@ -150,10 +150,7 @@ class Risk extends \yii\db\ActiveRecord
             'departname' => 'แผนก',
             'irtypename' => 'ประเภทการรายงาน',
             'irdepname' => 'แผนกที่รายงานถึง',
-            
             'affectedname' => 'ผู้เสียหาย/ได้รับผลกระทบ',
-            
-            
             'loginname' => 'รายงานโดย',
             'updatename' => 'อับเดทโดย',
         ];
@@ -220,10 +217,10 @@ class Risk extends \yii\db\ActiveRecord
     public function getIrdep() {
         return @$this->hasOne(Department::className(), ['id' => 'user_ir']);
     }
-
     public function getIrdepname() {
         return @$this->irdep->depart_name;
     }
+    
  // get ที่มาของรายงาน 
     public function getInform() {
         return @$this->hasOne(Inform::className(), ['id' => 'inform_id']);
@@ -232,7 +229,7 @@ class Risk extends \yii\db\ActiveRecord
         return @$this->inform->inform_name;
     }   
     
-  // get ชื่อผู้บันทึก 
+ // get ชื่อผู้บันทึก 
     public function getLogin() {
         return @$this->hasOne(User::className(), ['id' => 'created_by']);
     }

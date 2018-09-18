@@ -5,7 +5,7 @@
 use yii\helpers\Html;
 
 $this->title = 'ทีมพัฒนาระบบ HRMS';
-$this->params['breadcrumbs'][] = $this->title;
+//$this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="panel panel-success">
     <div class="panel-heading"><span class="glyphicon glyphicon-bookmark" aria-hidden="true"></span> ทีมพัฒนาโปรแกรมบริหารความเสี่ยงสำหรับโรงพยาบาล HRMS.</div>

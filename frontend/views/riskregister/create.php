@@ -4,7 +4,7 @@ use yii\helpers\Html;
 
 
 /* @var $this yii\web\View */
-/* @var $model frontend\Models\Riskregister */
+/* @var $model frontend\models\Riskregister */
 
 $this->title = 'Create Riskregister';
 $this->params['breadcrumbs'][] = ['label' => 'Riskregisters', 'url' => ['index']];

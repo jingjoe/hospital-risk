@@ -6,6 +6,7 @@ use yii\helpers\Html;
 use yii\bootstrap\Nav;
 use yii\bootstrap\NavBar;
 use yii\widgets\Breadcrumbs;
+use kartik\nav\NavX;
 
 use frontend\assets\AppAsset;
 use frontend\assets\DatatablesAsset;
@@ -70,7 +71,14 @@ AppAsset::register($this);
 
             if (!Yii::$app->user->isGuest) {
                 $risk_mnu_itms[] = ['label' => '<span class="glyphicon glyphicon-saved"></span> ตรวจสอบความเสี่ยง', 'url' => ['risk/approve'],'visible' => !Yii::$app->user->isGuest && Yii::$app->user->identity->role != 3 ];
-                $risk_mnu_itms[] = ['label' => '<span class="glyphicon glyphicon-thumbs-up"></span> ทบทวนความเสี่ยง', 'url' => ['risk/review'],'visible' => !Yii::$app->user->isGuest && Yii::$app->user->identity->role != 3 ];
+                $risk_mnu_itms[] = ['label' => '<span class="glyphicon glyphicon-thumbs-up"></span> ทบทวนความเสี่ยง', 'url' => ['riskreview/index'],
+                                        'items' => [['label' => 'มี Risk มาถึงคุณ', 'url'=> ['/riskreview/view1']],
+                                                    ['label' => 'มี Risk มาถึงแผนก-ฝ่าย', 'url'=> ['/riskreview/view2']],
+                                                    ['label' => 'มี Risk มาถึงทีม', 'url'=> ['/riskreview/view3']],
+                                        ],
+                    
+                                    'visible' => !Yii::$app->user->isGuest && Yii::$app->user->identity->role != 3 
+                                    ];
             }
 
             $menuItems = [
@@ -96,12 +104,12 @@ AppAsset::register($this);
                      '<li class="divider"></li>',
                      '<li class="dropdown-header">จัดการข้อมูลความเสี่ยง</li>',
                         ['label' => '<span class="glyphicon glyphicon-menu-right"></span> ประเภทความเสี่ยง','url' => ['type/index']],
-                        ['label' => '<span class="glyphicon glyphicon-menu-right"></span> กลุ่มความเสี่ยง','url' => ['riskgroup/index']],
-                        ['label' => '<span class="glyphicon glyphicon-menu-right"></span> ระดับการแจ้งเตือน','url' => ['levelwarning/index']],  
+                        ['label' => '<span class="glyphicon glyphicon-menu-right"></span> กลุ่มความเสี่ยง','url' => ['riskgroup/index']], 
                         ['label' => '<span class="glyphicon glyphicon-menu-right"></span> ระดับความรุนแรง','url' => ['level/index']],          
                         ['label' => '<span class="glyphicon glyphicon-menu-right"></span> โปรแกรมความเสี่ยง','url' => ['program/index']],
                         ['label' => '<span class="glyphicon glyphicon-menu-right"></span> คลังความเสี่ยง',  'url' => ['riskstore/index']],
                         ['label' => '<span class="glyphicon glyphicon-menu-right"></span> ที่มาของรายงานความเสี่ยง', 'url' => ['inform/index']],
+                        ['label' => '<span class="glyphicon glyphicon-menu-right"></span> ระดับการทบทวน','url' => ['levelwarning/index']], 
                         ['label' => '<span class="glyphicon glyphicon-menu-right"></span> ประเภทการทบทวน', 'url' => ['reviewtype/index']],
                         ['label' => '<span class="glyphicon glyphicon-menu-right"></span> ผลการทบทวน', 'url' => ['reviewresults/index']],
                         ['label' => '<span class="glyphicon glyphicon-menu-right"></span> สถานที่เกิดความเสี่ยง','url' => ['location/index']],
@@ -115,7 +123,7 @@ AppAsset::register($this);
    
 
 
-            echo Nav::widget([
+            echo NavX::widget([
                 'options' => ['class' => 'navbar-nav navbar-right'],
                 'encodeLabels' => false,
                 'items' => $menuItems,

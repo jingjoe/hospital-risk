@@ -1,14 +1,14 @@
 <?php
 
-namespace frontend\Models;
+namespace frontend\models;
 
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use frontend\Models\Riskregister;
+use frontend\models\Riskregister;
 
 /**
- * RiskregisterSearch represents the model behind the search form of `frontend\Models\Riskregister`.
+ * RiskregisterSearch represents the model behind the search form of `frontend\models\Riskregister`.
  */
 class RiskregisterSearch extends Riskregister
 {
@@ -18,8 +18,8 @@ class RiskregisterSearch extends Riskregister
     public function rules()
     {
         return [
-            [['id', 'id_risk', 'duration_id', 'location_id', 'user_ir', 'program_id', 'riskstore_id', 'inform_id', 'created_by', 'updated_by', 'send_use', 'sendto_team_id'], 'integer'],
-            [['date_report', 'time_report', 'user_ir_type', 'level_id', 'detail', 'detail_hosxp', 'affected', 'edit', 'problem_basic', 'image', 'status_risk', 'department_id', 'create_date', 'modify_date', 'send_date', 'register_date', 'note', 'sendto_department_id', 'sendto_member_cid'], 'safe'],
+            [['id', 'id_risk', 'duration_id', 'location_id', 'user_ir', 'program_id', 'riskstore_id', 'inform_id', 'created_by', 'updated_by', 'sendto_team_id'], 'integer'],
+            [['date_report', 'time_report', 'user_ir_type', 'level_id', 'detail', 'detail_hosxp', 'affected', 'edit', 'problem_basic', 'image', 'status_risk', 'department_id', 'create_date', 'modify_date', 'send_date', 'send_use', 'register_date', 'note', 'sendto_department_id', 'sendto_member_cid','repeat_code','url'], 'safe'],
         ];
     }
 
@@ -74,9 +74,9 @@ class RiskregisterSearch extends Riskregister
             'create_date' => $this->create_date,
             'modify_date' => $this->modify_date,
             'send_date' => $this->send_date,
-            'send_use' => $this->send_use,
             'register_date' => $this->register_date,
             'sendto_team_id' => $this->sendto_team_id,
+            'repeat_code' => $this->repeat_code,
         ]);
 
         $query->andFilterWhere(['like', 'user_ir_type', $this->user_ir_type])
@@ -89,9 +89,11 @@ class RiskregisterSearch extends Riskregister
             ->andFilterWhere(['like', 'image', $this->image])
             ->andFilterWhere(['like', 'status_risk', $this->status_risk])
             ->andFilterWhere(['like', 'department_id', $this->department_id])
+            ->andFilterWhere(['like', 'send_use', $this->send_use])
             ->andFilterWhere(['like', 'note', $this->note])
             ->andFilterWhere(['like', 'sendto_department_id', $this->sendto_department_id])
-            ->andFilterWhere(['like', 'sendto_member_cid', $this->sendto_member_cid]);
+            ->andFilterWhere(['like', 'sendto_member_cid', $this->sendto_member_cid])
+            ->andFilterWhere(['like', 'repeat_code', $this->repeat_code]);
 
         return $dataProvider;
     }

@@ -7,6 +7,7 @@ use yii\db\Expression;
 use yii\behaviors\TimestampBehavior;
 use yii\behaviors\BlameableBehavior;
 use \yii\web\UploadedFile;
+use yii\helpers\ArrayHelper;
 
 use frontend\models\Department;
 use frontend\models\Position;
@@ -49,6 +50,7 @@ class Member extends \yii\db\ActiveRecord
             [['create_date', 'modify_date'], 'safe'],
             [['member_name'], 'string', 'max' => 60],
             [['cid'],'string', 'max' => 13],
+            [['priority'],'string'],
             [['img'], 'file',
                 'skipOnEmpty' => true,
                 'extensions' => 'png,jpg'
@@ -79,24 +81,22 @@ class Member extends \yii\db\ActiveRecord
             'member_name' => 'ชื่อ-นามสกุล',
             'department_id' => 'สังกัดแผนก',
             'position_id' => 'ตำแหน่ง',
+            'priority' => 'ตำแหน่งสายอำนวยการ',
             'img' => 'รูปประจำตัว',
             'team_id' => 'ทีมนำ',
             'create_date' => 'วันบันทึก',
             'modify_date' => 'วันปรับปรุง',
             'created_by' => 'บันทึกโดย',
             'updated_by' => 'อับเดทโดย',
-        // เพิ่มฟิวล์ใหม่ จาก funtion get  relation   User
+            
+        // เพิ่มฟิวล์ใหม่ จาก funtion get  relation
             'loginname' => 'ผู้บันทึก',
             'updatename' => 'ผู้อับเดท',
-        //เพิ่มฟิวล์ใหม่ จาก funtion get  relation  Department 
-             'departname' => 'แผนก',
-        //เพิ่มฟิวล์ใหม่ จาก funtion get  relation  Position
-             'positionname' => 'ตำแหน่ง',
-        //เพิ่มฟิวล์ใหม่ จาก funtion get  relation  Team 
-             'teamname' => 'ทีมนำ',
-            
-       //เพิ่มฟิวล์ใหม่ จาก funtion get  relation  Member
-             'membername' => 'ชื่อ',
+            'departname' => 'แผนก',
+            'positionname' => 'ตำแหน่ง',
+            'priorname' => 'ตำแหน่งสายอำนวยการ',
+            'teamname' => 'ทีมนำ',
+            'membername' => 'ชื่อ',
         ];
     }
     
@@ -182,4 +182,34 @@ class Member extends \yii\db\ActiveRecord
     public function getPhotoViewer(){
       return empty($this->img) ? Yii::getAlias('@web').'/images/none.png' : $this->getUploadUrl().$this->img;
     }
+  
+//  สร้างรายการให้เลือก itemAlias  radioList  
+    public static function itemAlias($type,$code=NULL) {
+        $_items = array(
+            'prior' => array(
+                '1' => 'หัวหน้าฝ่าย',
+                '2' => 'หัวหน้าแผนก',
+                '3' => 'หัวหน้างาน',
+                '4' => 'ไม่มี',
+            ),
+
+
+        );    
+        if (isset($code)){
+            return isset($_items[$type][$code]) ? $_items[$type][$code] : false;
+        }
+        else{         
+            return isset($_items[$type]) ? $_items[$type] : false;    
+        }
+        
+    } 
+    
+    public function getItemprior(){
+        return self::itemsAlias('prior');
+    }
+
+    public function getPriorname(){
+        return ArrayHelper::getValue($this->getItemprior(),$this->priority);
+    }
+ 
 }

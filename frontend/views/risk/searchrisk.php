@@ -13,7 +13,6 @@ $this->params['breadcrumbs'][] = $this->title;
 
 <div class='box-tools'>
     
-    
        <?php $form = ActiveForm::begin([
                    'layout' => 'horizontal',
                    'action' => ['searchrisk'],
@@ -21,13 +20,14 @@ $this->params['breadcrumbs'][] = $this->title;
        ]);
        ?>
        <div class="input-group">
-           <input type="text" name="search" id="search" class="form-control" placeholder="ระบุชื่อความเสี่ยง..">
+           <input type="text" name="search" id="search"  class="form-control" placeholder="ระบุชื่อความเสี่ยง..">
            <span class="input-group-btn">
                <button class="btn btn-info btn-flat" type="submit">ค้นหา<i class="fa fa-fw fa-search"></i></button>
            </span>
        </div>
 
    <?php ActiveForm::end(); ?>
+
 </div>
 <br>
 <div class="panel panel-default">
@@ -39,7 +39,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'panel'=>[],
             'responsive' => true,
             'hover'=>true,
-            'floatHeader' => true,  // header เลื่อนตาม
+            //'floatHeader' => true,  // header เลื่อนตาม
             'pager' => [
                     'options'=>['class'=>'pagination'],   // set clas name used in ui list of pagination
                     'prevPageLabel' => 'ก่อนหน้า',   // Set the label for the "previous" page button
@@ -90,4 +90,6 @@ $this->params['breadcrumbs'][] = $this->title;
         ?>
     </div> 
 </div>
+
+
 <?= \bluezed\scrollTop\ScrollTop::widget() ?>

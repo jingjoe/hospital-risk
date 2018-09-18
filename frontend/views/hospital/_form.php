@@ -1,7 +1,8 @@
 <?php
 
 use yii\helpers\Html;
-use yii\widgets\ActiveForm;
+//use yii\widgets\ActiveForm;
+use yii\bootstrap\ActiveForm;
 
 /* @var $this yii\web\View */
 /* @var $model frontend\models\Hospital */
@@ -40,7 +41,10 @@ use yii\widgets\ActiveForm;
             ])
             ?>
 
-    <?= $form->field($model, 'active_code')->textarea(['rows' => 2]) ?>
+    <?= $form->field($model, 'linetoken')->textInput() ?>
+    
+    <?= $form->field($model, 'linenotify')->label('แจ้งเตือนความเสี่ยงผ่าน Line Notify')->inline()->radioList(frontend\models\Hospital::itemAlias('line')) ?>  
+    <?= $form->field($model, 'sendmail')->label('แจ้งเตือนความเสี่ยงผ่าน eMail')->inline()->radioList(frontend\models\Hospital::itemAlias('mail')) ?>  
 
      <div class="form-group">
         <?= Html::submitButton('<i class="glyphicon glyphicon-floppy-save"></i> ' . ($model->isNewRecord ? 'บันทึก' : 'แก้ไข'), ['class' => ($model->isNewRecord ? 'btn btn-success' : 'btn btn-warning') . ' btn-lg btn-block']) ?>

@@ -6,8 +6,8 @@ use yii\widgets\DetailView;
 /* @var $this yii\web\View */
 /* @var $model frontend\models\Levelwarning */
 
-$this->title =''. ' '.'ไอดี : ' . ' ' . $model->id. ' '.'ระดับการแจ้งเตือน : ' . ' ' . $model->warning_name ;
-$this->params['breadcrumbs'][] = ['label' => 'ข้อมูลระดับการแจ้งเตือน', 'url' => ['index']];
+$this->title =''. ' '.'ไอดี : ' . ' ' . $model->id. ' '.'ระดับการทบทวน : ' . ' ' . $model->warning_name ;
+$this->params['breadcrumbs'][] = ['label' => 'ข้อมูลระดับการทบทวน', 'url' => ['index']];
 ?>
 <div class="levelwarning-view">
 

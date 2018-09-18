@@ -41,6 +41,7 @@ use yii\helpers\Url;
 // condatabase
 use yii\db\Command;
 
+
 /**
  * RiskController implements the CRUD actions for Risk model.
  */
@@ -59,7 +60,7 @@ class RiskController extends Controller
         }
         $arr = ['index'];
         if ($role != 99) {
-            $arr = ['index','approve', 'view', 'create', 'update', 'delete', 'searchrisk'];
+            $arr = ['index','approve', 'send', 'view', 'create', 'update', 'delete', 'searchrisk'];
         }
         return [
             'verbs' => [
@@ -73,7 +74,7 @@ class RiskController extends Controller
                 'ruleConfig' => [
                     'class' => AccessRule::className(),
                 ],
-                'only' => ['index', 'approve','view', 'create', 'update', 'delete','searchrisk'],
+                'only' => ['index', 'approve','send','view', 'create', 'update', 'delete','searchrisk'],
                 'rules' => [
                     [
                         'allow' => true,
@@ -200,36 +201,6 @@ class RiskController extends Controller
         ]);
     }
     
-      public function actionUpdate2($id)
-    {
-        $model = $this->findModel($id);
-        $model->affectedToArray();
-
-        $riskse = ArrayHelper::map($this->GetRisk($model->program_id),'id','name');
-        $level = ArrayHelper::map($this->GetLevel($model->level_id),'id','name');
-        
-        $cid_r= Yii::$app->user->identity->cid;
-        $sql = Yii::$app->db->createCommand("SELECT department_id FROM member  WHERE cid='$cid_r'")->queryOne();
-        $dep_id =  $sql['department_id'];
-        
-        $model->department_id = $dep_id; 
-
-       // if ($model->load(Yii::$app->request->post()) && $model->save()) {
-        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
-              $model->image = $model->uploadMultiple($model,'image');
-              $model->save();
-            Yii::$app->session->setFlash('success', 'แก้ไขข้อมูลเรียบร้อยแล้ว');
-            return $this->redirect('index.php?r=risk/index');
-        }
-
-        return $this->render('update2', [
-            'model' => $model,
-            'riskse' => $riskse,
-            'level' =>$level,
-        ]);
-    }
-
-
     /**
      * Deletes an existing Risk model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
@@ -339,14 +310,19 @@ class RiskController extends Controller
             'dataProvider' => $dataProvider]);
     }
     
-        public function actionApprove()
-    {
+    public function actionApprove(){
         
         $searchModel = new RiskSearch();
+        $searchModel2 = new \frontend\models\RiskregisterSearch();
 
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider2 = $searchModel2->search(Yii::$app->request->queryParams);
+        
         $dataProvider->query->andWhere(['status_risk'=>'รายงาน']); //  ดึงเฉพาะที่ risk status = รายงาน เพื่อมาตรวจสอบ และ ส่งให้หน่วย/ทีมทบทวน
+        $dataProvider2->query->andWhere(['status_risk'=>'รายงาน']); //  ดึงเฉพาะที่ risk status = รายงาน เพื่อมาตรวจสอบ และ ส่งให้หน่วย/ทีมทบทวน
+        
         $dataProvider->pagination->pageSize=100;
+        $dataProvider2->pagination->pageSize=500;
         
         $dataProvider->sort->enableMultiSort = true;
         $dataProvider->sort->defaultOrder = [
@@ -354,9 +330,45 @@ class RiskController extends Controller
                //'create_date' => SORT_ASC, 
         ];
         
+        $dataProvider2->sort->enableMultiSort = true;
+        $dataProvider2->sort->defaultOrder = [
+                 'send_date' => SORT_ASC,
+               //'send_date' => SORT_ASC, 
+        ];
+        
         return $this->render('approve', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'dataProvider2' => $dataProvider2,
         ]);
     }
+    
+    
+    public function actionSend($id) {
+        $user = Yii::$app->user->identity->username;
+        $connection = Yii::$app->db;
+
+        $model = Risk::find()->where(['id' => $id])->one();
+
+        if ($model === null) {
+            Yii::$app->session->setFlash('warning', 'ลงทะเบียนความเสี่ยงไม่สำเร็จ');
+            return $this->redirect(['risk/approve']);
+        } else {
+            $datals = $connection->createCommand("INSERT INTO riskregister 
+                      SELECT NULL AS id,id AS id_risk,date_report,time_report,
+                      duration_id,location_id,user_ir_type,user_ir,program_id,level_id,
+                      riskstore_id,detail,detail_hosxp,affected,edit,problem_basic,image,
+                      inform_id,status_risk,created_by,department_id,updated_by,create_date,
+                      modify_date,NOW() AS send_date, '$user' AS send_use,NULL AS register_date,
+                      NULL AS note,NULL AS sendto_team_id,NULL AS sendto_department_id,
+                      NULL AS sendto_member_cid,NULL AS repeat_code,NULL AS url
+                      FROM risk WHERE id='$id' ")->execute();
+
+            $datals = $connection->createCommand("UPDATE risk SET status_risk = 'ตรวจสอบ' WHERE id='$id'")->execute();
+        
+            Yii::$app->session->setFlash('success', 'ลงทะเบียนความเสี่ยงเรียบร้อยแล้ว');
+                return $this->redirect(['approve']);
+        }     
+    }
+    
 }

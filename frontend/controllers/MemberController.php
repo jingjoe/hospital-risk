@@ -103,6 +103,7 @@ class MemberController extends Controller
             Yii::$app->session->setFlash('success', 'เพิ่มข้อมูลเรียบร้อยแล้ว');
             return $this->redirect('index.php?r=member/index');
         } else {
+             $model->priority = 4; 
             return $this->renderAjax('create', [
                 'model' => $model,
             ]);

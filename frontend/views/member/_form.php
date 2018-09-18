@@ -1,8 +1,10 @@
 <?php
 use yii\helpers\Html;
-use yii\widgets\ActiveForm;
+//use yii\widgets\ActiveForm;
+use yii\bootstrap\ActiveForm;
 use yii\helpers\ArrayHelper;
 use kartik\widgets\Select2;
+use kartik\checkbox\CheckboxX;
 
 use yii\helpers\VarDumper;
 use yii\helpers\Url;
@@ -42,6 +44,9 @@ use frontend\models\Team;
                 ],
             ]);
             ?>
+  
+            <?= $form->field($model, 'priority')->label('ตำแหน่งสายอำนวยการ')->inline()->radioList(frontend\models\Member::itemAlias('prior')) ?>            
+     
     
             <?= $form->field($model, 'team_id')->widget(Select2::classname(), [
                 'data' => ArrayHelper::map(Team::find()->all(),'id','team_name'),
