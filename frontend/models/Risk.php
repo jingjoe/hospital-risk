@@ -67,11 +67,10 @@ class Risk extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['date_report', 'time_report','user_ir_type', 'level_id', 'riskstore_id', 'inform_id'], 'required'],
+            [['date_report', 'time_report','user_ir_type', 'level_id', 'riskstore_id', 'inform_id', 'location_id'], 'required'],
             [['date_report', 'time_report', 'create_date', 'modify_date'], 'safe'],
             [['duration_id', 'location_id', 'user_ir', 'program_id', 'riskstore_id', 'inform_id', 'created_by', 'updated_by'], 'integer'],
-            [['department_id','detail', 'detail_hosxp', 'problem_basic'], 'string'],
-            [['user_ir_type'], 'string', 'max' => 50],
+            [['user_ir_type','department_id','detail', 'detail_hosxp', 'problem_basic'], 'string'],
             [['edit'], 'string', 'max' => 10],
             [['level_id'], 'string', 'max' => 2],
             [['status_risk'], 'string', 'max' => 100],
@@ -130,7 +129,7 @@ class Risk extends \yii\db\ActiveRecord
             'affected' => 'ผู้เสียหาย/ได้รับผลกระทบ',
             'edit' => 'การแก้ปัญหา',
             'problem_basic' => 'วิธีแก้ปัญหาเบื้องต้น',
-            'image' => 'เอกสาร/ภาพประกอบ',
+            'image' => 'ภาพถ่าย',
             'inform_id' => 'ที่มาของรายงาน',
             'status_risk' => 'สถานะความเสี่ยง',
             'created_by' => 'บันทึกโดย',

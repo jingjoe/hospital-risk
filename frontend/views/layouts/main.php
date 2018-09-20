@@ -62,25 +62,25 @@ AppAsset::register($this);
             }
 
             $risk_mnu_itms[] = ['label' => '<span class="glyphicon glyphicon-floppy-saved"></span> รายงานความเสี่ยง', 'url' => ['risk/index']];
-            $risk_mnu_itms[] = ['label' => '<span class="glyphicon glyphicon-bell"></span> ติดตามความเสี่ยง', 'url' => ['risk/follow']];
+       
 
             $help_mnu_itms[] =['label' => '<span class="glyphicon glyphicon-menu-right"></span> ประวัติการปรับปรุงโปรแกรม','url' => ['/historyview/index']];
             $help_mnu_itms[] =['label' => '<span class="glyphicon glyphicon-menu-right"></span> คู่มือการใช้งาน','url' => ['help/manual']];
             $help_mnu_itms[] =['label' => '<span class="glyphicon glyphicon-menu-right"></span> ความรู้เรื่องความเสี่ยง','url' => ['help/books']];
             $help_mnu_itms[] =['label' => '<span class="glyphicon glyphicon-menu-right"></span> ติดต่อ', 'url' => ['/site/about']];
 
-            if (!Yii::$app->user->isGuest) {
-                $risk_mnu_itms[] = ['label' => '<span class="glyphicon glyphicon-saved"></span> ตรวจสอบความเสี่ยง', 'url' => ['risk/approve'],'visible' => !Yii::$app->user->isGuest && Yii::$app->user->identity->role != 3 ];
-                $risk_mnu_itms[] = ['label' => '<span class="glyphicon glyphicon-thumbs-up"></span> ทบทวนความเสี่ยง', 'url' => ['riskreview/index'],
-                                        'items' => [['label' => 'มี Risk มาถึงคุณ', 'url'=> ['/riskreview/view1']],
-                                                    ['label' => 'มี Risk มาถึงแผนก-ฝ่าย', 'url'=> ['/riskreview/view2']],
-                                                    ['label' => 'มี Risk มาถึงทีม', 'url'=> ['/riskreview/view3']],
-                                        ],
-                    
-                                    'visible' => !Yii::$app->user->isGuest && Yii::$app->user->identity->role != 3 
-                                    ];
-            }
+            if (!Yii::$app->user->isGuest && Yii::$app->user->identity->role != 99) {
 
+                $risk_mnu_itms[] = ['label' => '<span class="glyphicon glyphicon-thumbs-up"></span> ทบทวนความเสี่ยง', 'url' => ['riskreview/index'],
+                                        'items' => [['label' => 'มี Risk มาถึงคุณ', 'url'=> ['/riskregister/touse']],
+                                                    ['label' => 'มี Risk มาถึงแผนก-ฝ่าย', 'url'=> ['/riskregister/todep']],
+                                                    ['label' => 'มี Risk มาถึงทีม', 'url'=> ['/riskregister/toteam']],
+                                        ],'visible' => !Yii::$app->user->isGuest && Yii::$app->user->identity->role != 99 
+                                   ];
+                $risk_mnu_itms[] = ['label' => '<span class="glyphicon glyphicon-saved"></span> ตรวจสอบความเสี่ยง', 'url' => ['risk/approve'],'visible' => !Yii::$app->user->isGuest && Yii::$app->user->identity->role != 3 ];
+                
+            }
+            $risk_mnu_itms[] = ['label' => '<span class="glyphicon glyphicon-bell"></span> ติดตามความเสี่ยง', 'url' => ['riskregister/follow']];
             $menuItems = [
                 ['label' => '<span class="glyphicon glyphicon-home"></span> หน้าหลัก','url' => ['/site/index']],
                 ['label' => '<span class="glyphicon glyphicon-screenshot"></span> จัดการความเสี่ยง', 'items' => $risk_mnu_itms,'visible' => !Yii::$app->user->isGuest && Yii::$app->user->identity->role != 99],

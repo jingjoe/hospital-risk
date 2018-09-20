@@ -35,7 +35,7 @@ use frontend\models\Inform;
 
 <!-- row1 --> 
     <div class="row">
-        <div class="col-md-3 col-xs-12">
+        <div class="col-md-2 col-xs-12">
             <?php
             echo '<label class="control-label">วันที่</label>';
             echo DatePicker::widget([
@@ -53,7 +53,7 @@ use frontend\models\Inform;
             ]);
             ?>
         </div>
-        <div class="col-md-2 col-xs-12">
+        <div class="col-md-3 col-xs-12">
             <?php
             echo '<label class="control-label">เวลา</label>';
             echo TimePicker::widget([
@@ -213,3 +213,28 @@ use frontend\models\Inform;
 
 </div>
 <?= \bluezed\scrollTop\ScrollTop::widget() ?>
+
+
+<?php
+$this->registerJs("
+  var input1 = 'input[name=\"Risk[user_ir_type]\"]';
+  setHideInput(2,$(input1).val(),'.field-risk-user_ir');
+  $(input1).click(function(val){
+    setHideInput(2,$(this).val(),'.field-risk-user_ir');
+  });
+
+
+  function setHideInput(set,value,objTarget)
+  {
+    console.log(set+'='+value);
+      if(set==value)
+      {
+        $(objTarget).show(500);
+      }
+      else
+      {
+        $(objTarget).hide(500);
+      }
+  }
+");
+ ?>

@@ -81,7 +81,7 @@ class Riskregister extends \yii\db\ActiveRecord
             [['id_risk', 'date_report', 'time_report', 'user_ir_type', 'level_id', 'riskstore_id', 'inform_id', 'department_id','register_date'], 'required'],
             [['id_risk', 'duration_id', 'location_id', 'user_ir', 'program_id', 'riskstore_id', 'inform_id', 'created_by', 'updated_by', 'sendto_team_id'], 'integer'],
             [['affected','date_report', 'time_report', 'create_date', 'modify_date', 'send_date'], 'safe'],
-            [['detail', 'detail_hosxp', 'problem_basic','url'], 'string'],
+            [['detail', 'detail_hosxp', 'problem_basic','url','refer_type'], 'string'],
             [['user_ir_type'], 'string', 'max' => 50],
             [['level_id'], 'string', 'max' => 2],
             [['edit'], 'string', 'max' => 10],
@@ -145,7 +145,7 @@ class Riskregister extends \yii\db\ActiveRecord
             'affected' => 'ผู้เสียหาย/ได้รับผลกระทบ',
             'edit' => 'การแก้ปัญหา',
             'problem_basic' => 'วิธีแก้ปัญหาเบื้องต้น',
-            'image' => 'เอกสาร-ภาพประกอบ',
+            'image' => 'ภาพถ่าย',
             'inform_id' => 'ที่มาของรายงานความเสี่ยง',
             'status_risk' => 'สถานะความเสี่ยง',
             'created_by' => 'บันทึกโดย',
@@ -157,6 +157,7 @@ class Riskregister extends \yii\db\ActiveRecord
             'send_use' => 'ผู้ลงทะเบียน',
             'register_date' => 'วันที่ตรวจสอบ',
             'note' => 'Note',
+            'refer_type' =>'การส่งต่อ',
             'sendto_team_id' => 'ส่งให้ทีม',
             'sendto_department_id' => 'ส่งให้แผนก',
             'sendto_member_cid' => 'ส่งให้ผู้รับผิดชอบ',
@@ -307,6 +308,11 @@ class Riskregister extends \yii\db\ActiveRecord
                 '1' => 'รายงานต้นเอง',
                 '2' => 'รายงานผู้อื่น',
             ),
+            'retype' => array(
+                '1' => 'ส่งต่อทีม',
+                '2' => 'ส่งต่อแผนก',
+                '3' => 'ส่งต่อผู้รับผิดชอบ',
+            ),
             'affected'=>[
                 'ผู้ป่วย' => 'ผู้ป่วย',
                 'ญาติ' => 'ญาติ',
@@ -356,6 +362,15 @@ class Riskregister extends \yii\db\ActiveRecord
     public function getIrtypename(){
         return ArrayHelper::getValue($this->getItemIrtype(),$this->user_ir_type);
     }
+    
+    public function getItemRetype(){
+        return self::itemsAlias('retype');
+    }
+
+    public function getRetypename(){
+        return ArrayHelper::getValue($this->getItemRetype(),$this->refer_type);
+    }
+
     
 // funtion Part Upload file
 

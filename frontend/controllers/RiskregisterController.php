@@ -10,6 +10,17 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
+use yii\data\ActiveDataProvider;
+use yii\data\ArrayDataProvider;
+
+
+//AccessControl
+use yii\filters\AccessControl;
+use yii\authclient\AuthAction;
+
+//  Add User Dektrium
+use dektrium\user\filters\AccessRule;
+use dektrium\user\Finder;
 
 //  dropdownlist function Get
 use frontend\models\Riskstore;
@@ -32,52 +43,111 @@ class RiskregisterController extends Controller
      */
     public $enableCsrfValidation = false;
     
-    public function behaviors()
+     public function behaviors() 
     {
+        $role = 0;
+        if (!Yii::$app->user->isGuest) {
+            $role = Yii::$app->user->identity->role;
+        }
+        $arr = ['index'];
+        if ($role != 99) {
+            $arr = ['view','create', 'update', 'delete','views','use','dep', 'team']; //action login ok ต้องเข้าสู่ระบบ และ role ไม่เท่ากับ 99 (Waiting)
+        }
         return [
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
-                    'delete' => ['POST'],
+                    'switch'       => ['post'],
+                ],
+            ],
+            'access' => [
+                'class' => AccessControl::className(),
+                'ruleConfig' => [
+                    'class' => AccessRule::className(),
+                ],
+                'only' => ['view','create', 'update', 'delete','use','dep', 'team'],  //ถ้าไม่ระบุแสดงว่าไม่ต้องตรวจสอบสิทธิ
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'actions' => $arr,
+                        'roles' => ['@'],
+                    ],
+                    [
+                        'allow' => true,
+                        'roles' => ['admin'],
+                    ],
                 ],
             ],
         ];
     }
 
-    /**
-     * Lists all Riskregister models.
-     * @return mixed
-     */
     public function actionIndex()
     {
+        return $this->goHome();
+    }
+    public function actionTouse()
+    {
         $searchModel = new RiskregisterSearch();
+        $searchModel->status_risk = 'ตรวจสอบ';
+        $searchModel->sendto_member_cid =Yii::$app->user->identity->cid;
+       
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
-        return $this->render('index', [
+        return $this->render('use', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
+    }
+    
+    public function actionTodep()
+    {
+        $cid_d= Yii::$app->user->identity->cid;
+        $sql_dep = Yii::$app->db->createCommand("SELECT department_id FROM member  WHERE cid='$cid_d'")->queryOne();
+        $dep_id =  $sql_dep['department_id'];
+
+        $searchModel = new RiskregisterSearch();
+        $searchModel->sendto_department_id = $dep_id;
+        $searchModel->status_risk = 'ตรวจสอบ';
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        return $this->render('dep', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
+    }
+    
+    public function actionToteam()
+    {
+        $cid_t= Yii::$app->user->identity->cid;
+        $sql_te = Yii::$app->db->createCommand("SELECT IFNULL(team_id,0) AS team_id FROM member  WHERE cid='$cid_t'")->queryOne();
+        $te_id =  $sql_te['team_id'];
+        
+        $searchModel = new RiskregisterSearch();
+        $searchModel->sendto_team_id = $te_id;
+        $searchModel->status_risk = 'ตรวจสอบ';
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        return $this->render('team', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
     }
 
-    /**
-     * Displays a single Riskregister model.
-     * @param integer $id
-     * @param integer $id_risk
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
-     */
     public function actionView($id, $id_risk)
     {
         return $this->render('view', [
             'model' => $this->findModel($id, $id_risk),
         ]);
     }
+    
+    public function actionViews($id, $id_risk)
+    {
+        return $this->render('views', [
+            'model' => $this->findModel($id, $id_risk),
+        ]);
+    }
 
-    /**
-     * Creates a new Riskregister model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return mixed
-     */
+
     public function actionCreate()
     {
         $model = new Riskregister();
@@ -90,28 +160,19 @@ class RiskregisterController extends Controller
             'model' => $model,
         ]);
     }
-
-    /**
-     * Updates an existing Riskregister model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id
-     * @param integer $id_risk
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
-     */
         
 // Function Send To Line
     public function sendLine($model,$id, $id_risk){
         
         $model = Riskregister::find()->where(['id' => $id,'id_risk' => $id_risk])->one();
         
-        $url = Url::to(['riskregister/view', 'id' => $id,'id_risk'=>$id_risk], true);
+        $url = Url::to(['riskregister/views', 'id' => $id,'id_risk'=>$id_risk], true);
 
-        //$command1 = Yii::$app->db->createCommand("SELECT linetoken FROM hospital WHERE id='1' ");
-        //$line_token = $command1->queryScalar();
+        $command1 = Yii::$app->db->createCommand("SELECT linetoken FROM hospital WHERE id='1' ");
+        $line_token = $command1->queryScalar();
         
 	//$line_token = "Rh8MR5G3fkKgvxKTab5zVhhpdaIk4HGZobYhjvzhdlf";
-        $line_token = "";
+        //$line_token = "";
         if ($line_token <> '') {
             $ch = curl_init();  
             curl_setopt($ch, CURLOPT_URL,"https://notify-api.line.me/api/notify");
@@ -138,16 +199,25 @@ class RiskregisterController extends Controller
         
     public function actionUpdate($id, $id_risk)
     {
+        
+        $role = Yii::$app->user->identity->role;
+           if ($role == 99 || $role == 3) {
+               // return $this->redirect('index');
+                return $this->goHome();
+                //return $this->redirect(['user/security/login']);
+            }
+      
+
         $model = $this->findModel($id, $id_risk);
         $model->affectedToArray();
         
         $riskse = ArrayHelper::map($this->GetRisk($model->program_id),'id','name');
         $level = ArrayHelper::map($this->GetLevel($model->level_id),'id','name');
 
-        $url_link = Url::to(['riskregister/view', 'id' => $id,'id_risk'=>$id_risk], true); // ลิงค์แบบเต็ม http://localhost/myweb/controller/action=para1=para2
+        $url_link = Url::to(['riskregister/views', 'id' => $id,'id_risk'=>$id_risk], true); // ลิงค์แบบเต็ม http://localhost/myweb/controller/action=para1=para2
   
-        $model->register_date = date('Y-m-d'); 
-        
+        $model->register_date = date('Y-m-d');   
+        $model->refer_type= 1;
         $connection = Yii::$app->db;
 
           if ($model->load(Yii::$app->request->post()) && $model->validate()) {
@@ -170,29 +240,6 @@ class RiskregisterController extends Controller
         ]);
     }
 
-    /**
-     * Deletes an existing Riskregister model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
-     * @param integer $id_risk
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    public function actionDelete($id, $id_risk)
-    {
-        $this->findModel($id, $id_risk)->delete();
-
-        return $this->redirect(['index']);
-    }
-
-    /**
-     * Finds the Riskregister model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param integer $id
-     * @param integer $id_risk
-     * @return Riskregister the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
-     */
     protected function findModel($id, $id_risk)
     {
         if (($model = Riskregister::findOne(['id' => $id, 'id_risk' => $id_risk])) !== null) {

@@ -18,18 +18,10 @@ use frontend\models\Level;
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = 'ความเสี่ยง';
-$this->params['breadcrumbs'][] = $this->title;
+//$this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="risk-index">   
    
-    <p>
-        <?= Html::a('<i class="glyphicon glyphicon-send"></i> รายงานความเสี่ยง', ['create'], ['class' => 'btn btn-success', 'title' => 'รายงานความเสี่ยง']) ?>
-        
-        <?= Html::a('<i class="glyphicon glyphicon-search"></i> ค้นหาชื่อความเสี่ยง', ['risk/searchrisk'],['class' => ' btn btn-warning' , 'title' => 'ค้นหาชื่อความเสี่ยง']) ?>
-
-    </p>
-
-      
 <?php Pjax::begin(); ?>    
     <?= GridView::widget([
             'dataProvider' => $dataProvider,
@@ -37,8 +29,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'headerRowOptions' => ['style' => 'background-color:#cccccc'],
             'panel'=>[
                 'type'=>GridView::TYPE_DEFAULT,
-                //'before'=>Html::button('<i class="glyphicon glyphicon-send"></i> รายงานความเสี่ยง',  ['value' => Url::to(['risk/create']), 'title' => 'รายงานความเสี่ยง', 'class' => 'showModalButton btn btn-success']),
-                //'before'=>Html::a('<i class="glyphicon glyphicon-send"></i> รายงานความเสี่ยง', ['create'], ['class' => 'btn btn-success']),
+                'before'=>Html::a('<i class="glyphicon glyphicon-send"></i> รายงานความเสี่ยง', ['risk/create'], ['class' => 'btn btn-success', 'title' => 'รายงานความเสี่ยง']) .' '.Html::a('<i class="glyphicon glyphicon-search"></i> รายงานความเสี่ยง', ['risk/searchrisk'], ['class' => 'btn btn-warning' , 'title' => 'ค้นหาชื่อความเสี่ยง']),
                 //'heading'=>'สถานที่เกิดความเสี่ยง',
                 //'after' => 'วันที่ประมวลผล '.date('Y-m-d H:i:s').' น.',
                 //'footer'=>true
@@ -186,7 +177,7 @@ $this->params['breadcrumbs'][] = $this->title;
     ]); ?>
 <?php Pjax::end(); ?>
 </div>
-
+<!--
 <div class="alert alert-success alert-dismissible" role="alert">
   <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
   <h4><b class="text-red">หมายเหตุ : </b></h4>
@@ -196,5 +187,5 @@ $this->params['breadcrumbs'][] = $this->title;
         <li class="list-group-item-danger"> กำลังปรับปรุงให้แผนกตัวเองเห็นรายงานความเสี่ยงทั้งหมดแต่ไม่สามารถแก้ไขหรือลบของผู้อื่นได้ สามารถดูได้อย่างเดี่ยว</li>
     </ol>
 </div>
-
+-->
 <?= \bluezed\scrollTop\ScrollTop::widget() ?>

@@ -7,7 +7,7 @@ use yii\widgets\Pjax;
 /* @var $searchModel frontend\models\RiskregisterSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Riskregisters';
+$this->title = 'User';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="riskregister-index">

@@ -28,7 +28,6 @@ use frontend\models\Inform;
 /* @var $model frontend\models\Riskregister */
 /* @var $form yii\widgets\ActiveForm */
 
-$id= yii::$app->user->identity->id;
 ?>
 
 <div class="riskregister-form">
@@ -214,14 +213,15 @@ $id= yii::$app->user->identity->id;
 
     <!-- end row7 --> 
   <div class="panel panel-danger">
-    <div class="panel-heading" role="tab" id="headingOne">
+    <div class="panel-heading" role="tab" id="heading1">
       <h4 class="panel-title">
-        <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+        <a data-toggle="collapse" data-parent="#accordion" href="#collapse1" aria-expanded="true" aria-controls="collapse1">
           <h5><span class="glyphicon glyphicon-triangle-bottom"></span> ส่งต่อเพื่อการทบทวนความเสี่ยง (ส่งต่อทีม>ส่งต่อแผนก>ส่งต่อผู้รับผิดชอบความเสี่ยง) </h5>
         </a>
       </h4>
     </div>
-    <div id="collapseOne" class="accordion-body collapse" role="tabpanel" aria-labelledby="headingOne">
+
+    <div id="collapse1" class="accordion-body collapse" role="tabpanel" aria-labelledby="heading1">
       <div class="panel-body">
           <div class="row">
 
@@ -261,41 +261,50 @@ $id= yii::$app->user->identity->id;
                   ]);
                   ?>
               </div>
-              <div class="col-md-12 col-xs-12">
-                  <?=
-                  $form->field($model, 'sendto_team_id')->widget(Select2::classname(), [
-                      'data' => ArrayHelper::map(Team::find()->all(), 'id', 'team_name'),
-                      'options' => ['placeholder' => 'กรุณาเลือกทีม'],
-                      'pluginOptions' => [
-                          'allowClear' => true
-                      ],
-                  ]);
-                  ?>
-              </div>
-
-              <div class="col-md-12 col-xs-12">
-                  <?=
-                  $form->field($model, 'sendto_department_id')->widget(Select2::classname(), [
-                      'data' => ArrayHelper::map(Department::find()->all(), 'id', 'depart_name'),
-                      'options' => ['placeholder' => 'เลือกแผนก'],
-                      'pluginOptions' => [
-                          'allowClear' => true
-                      ],
-                  ]);
-                  ?>
-              </div>
-              <div class="col-md-12 col-xs-12">
-                  <?=
-                  $form->field($model, 'sendto_member_cid')->widget(Select2::classname(), [
-                      'data' => ArrayHelper::map(Member::find()->all(), 'cid', 'member_name'),
-                      'options' => ['placeholder' => 'กรุณาเลือกผู้รับผิดชอบ'],
-                      'pluginOptions' => [
-                          'allowClear' => true
-                      ],
-                  ]);
-                  ?>
-              </div>
           </div>
+          <div class="row">  
+                <div class="col-md-12 col-xs-12">
+                <?= $form->field($model, 'refer_type')->label('เลือกส่งต่อ')->inline()->radioList(frontend\models\Riskregister::itemAlias('retype')) ?>            
+                </div>
+          </div>
+       
+
+
+                          <?=
+                          $form->field($model, 'sendto_team_id')->widget(Select2::classname(), [
+                              'data' => ArrayHelper::map(Team::find()->all(), 'id', 'team_name'),
+                              'options' => ['placeholder' => 'กรุณาเลือกทีม'],
+                              'pluginOptions' => [
+                                  'allowClear' => true
+                              ],
+                          ]);
+                          ?>
+
+    
+                          <?=
+                          $form->field($model, 'sendto_department_id')->widget(Select2::classname(), [
+                              'data' => ArrayHelper::map(Department::find()->all(), 'id', 'depart_name'),
+                              'options' => ['placeholder' => 'เลือกแผนก'],
+                              'pluginOptions' => [
+                                  'allowClear' => true
+                              ],
+                          ]);
+                          ?>
+
+        
+
+                          <?=
+                          $form->field($model, 'sendto_member_cid')->widget(Select2::classname(), [
+                              'data' => ArrayHelper::map(Member::find()->all(), 'cid', 'member_name'),
+                              'options' => ['placeholder' => 'กรุณาเลือกผู้รับผิดชอบ'],
+                              'pluginOptions' => [
+                                  'allowClear' => true
+                              ],
+                          ]);
+                          ?>
+              
+          </div>
+
       </div>
     </div>
   </div>
@@ -310,3 +319,39 @@ $id= yii::$app->user->identity->id;
 
 </div>
 <?= \bluezed\scrollTop\ScrollTop::widget() ?>
+
+
+
+ <?php
+$this->registerJs("
+
+  var input2 = 'input[name=\"Riskregister[refer_type]\"]';
+  setHideInput(2,$(input2).val(),'.field-riskregister-sendto_department_id');
+  $(input2).click(function(val){
+    setHideInput(2,$(this).val(),'.field-riskregister-sendto_department_id');
+    setHideInput(1,$(this).val(),'.field-riskregister-sendto_team_id');
+  });
+  
+  var input3 = 'input[name=\"Riskregister[refer_type]\"]';
+  setHideInput(3,$(input3).val(),'.field-riskregister-sendto_member_cid');
+  $(input3).click(function(val){
+    setHideInput(3,$(this).val(),'.field-riskregister-sendto_member_cid');
+    setHideInput(1,$(this).val(),'.field-riskregister-sendto_team_id');
+  });
+
+
+
+  function setHideInput(set,value,objTarget)
+  {
+    console.log(set+'='+value);
+      if(set==value)
+      {
+        $(objTarget).show(500);
+      }
+      else
+      {
+        $(objTarget).hide(500);
+      }
+  }
+");
+ ?>

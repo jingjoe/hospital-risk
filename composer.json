@@ -32,7 +32,8 @@
         "bluezed/yii2-scroll-top": "*",
         "yii2mod/yii2-sweet-alert": "*",
         "miloschuman/yii2-highcharts-widget": "^6.0",
-        "rmrevin/yii2-fontawesome": "~2.17"
+        "rmrevin/yii2-fontawesome": "~2.17",
+        "wbraganca/yii2-dynamicform": "*"
 
     },
     "require-dev": {

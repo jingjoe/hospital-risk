@@ -74,7 +74,7 @@ class RiskController extends Controller
                 'ruleConfig' => [
                     'class' => AccessRule::className(),
                 ],
-                'only' => ['index', 'approve','send','view', 'create', 'update', 'delete','searchrisk'],
+                'only' => ['index', 'view', 'create', 'update', 'delete'],
                 'rules' => [
                     [
                         'allow' => true,
@@ -154,7 +154,8 @@ class RiskController extends Controller
         }else {
                 $model->date_report = date('Y-m-d'); 
                 $model->duration_id = 1; 
-                $model->user_ir_type = 2; 
+                $model->user_ir_type = 1; 
+                $model->inform_id= 8;
                 $model->edit = 'ได้'; 
                
                 return $this->render('create', [
@@ -312,6 +313,10 @@ class RiskController extends Controller
     
     public function actionApprove(){
         
+        if (Yii::$app->user->isGuest || Yii::$app->user->identity->role == 99 || Yii::$app->user->identity->role == 3) {
+              return $this->redirect(['user/security/login']);
+        }  
+        //$this->permitRole([1, 2]);
         $searchModel = new RiskSearch();
         $searchModel2 = new \frontend\models\RiskregisterSearch();
 
@@ -345,6 +350,10 @@ class RiskController extends Controller
     
     
     public function actionSend($id) {
+        
+        if (Yii::$app->user->isGuest || Yii::$app->user->identity->role == 99 || Yii::$app->user->identity->role == 3) {
+              return $this->redirect(['user/security/login']);
+        }  
         $user = Yii::$app->user->identity->username;
         $connection = Yii::$app->db;
 
@@ -360,7 +369,7 @@ class RiskController extends Controller
                       riskstore_id,detail,detail_hosxp,affected,edit,problem_basic,image,
                       inform_id,status_risk,created_by,department_id,updated_by,create_date,
                       modify_date,NOW() AS send_date, '$user' AS send_use,NULL AS register_date,
-                      NULL AS note,NULL AS sendto_team_id,NULL AS sendto_department_id,
+                      NULL AS note,NULL AS refer_type,NULL AS sendto_team_id,NULL AS sendto_department_id,
                       NULL AS sendto_member_cid,NULL AS repeat_code,NULL AS url
                       FROM risk WHERE id='$id' ")->execute();
 

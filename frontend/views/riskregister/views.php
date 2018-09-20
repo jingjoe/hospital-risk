@@ -10,8 +10,8 @@ use kartik\detail\DetailView;
 /* @var $model frontend\models\Riskregister */
 
 $this->title =''. ' '.'โปรแกรมความเสี่ยง : ' . ' ' . $model->programname. ' '.'ความเสี่ยง : ' . ' ' . $model->storename. ' '.'สถานะ : ' . ' ' . $model->status_risk ;
-$this->params['breadcrumbs'][] = ['label' => 'ตรวจสอบความเสี่ยง', 'url' => ['risk/approve']];
-$this->params['breadcrumbs'][] = 'ความเสี่ยงที่ผ่านการยืนยันแล้ว';
+//$this->params['breadcrumbs'][] = ['label' => 'ตรวจสอบความเสี่ยง', 'url' => ['risk/approve']];
+//$this->params['breadcrumbs'][] = 'ความเสี่ยงที่ผ่านการยืนยันแล้ว';
 
 ?>
 <div class="riskregister-view">
@@ -21,10 +21,6 @@ $this->params['breadcrumbs'][] = 'ความเสี่ยงที่ผ่�
         </button> 
         <h4><span class="glyphicon glyphicon-time" aria-hidden="true"></span> <?= Html::encode($this->title) ?></h4> 
     </div>
-    <p>
-        <?=  Html::a('Update', ['update', 'id' => $model->id, 'id_risk' => $model->id_risk], ['class' => 'btn btn-primary']) ?>
-    </p>
-
             <?=
             DetailView::widget([
                 'model' => $model,

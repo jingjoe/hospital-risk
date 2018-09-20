@@ -61,7 +61,7 @@ class LocationController extends Controller
     {
         $searchModel = new LocationSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        $dataProvider->pagination->pageSize=100;
+        $dataProvider->pagination->pageSize=500;
         
         return $this->render('index', [
             'searchModel' => $searchModel,

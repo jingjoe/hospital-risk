@@ -13,7 +13,7 @@ use yii\helpers\Url;
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = 'ตรวจสอบความเสี่ยง';
-$this->params['breadcrumbs'][] = $this->title;
+//$this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="risk-index">   
     <div class="panel panel-danger">
@@ -213,7 +213,7 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
 </div>
 
-
+<!--
 <div class="alert alert-success alert-dismissible" role="alert">
   <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
   <h4><b class="text-red">หมายเหตุ : </b></h4>
@@ -221,5 +221,5 @@ $this->params['breadcrumbs'][] = $this->title;
         <li class="list-group-item-info"> หลังจากกด send ข้อมูลจากตาราง risk จะ ถูก insert ไปยังตาราง riskregister และ insert ฟิว status_risk='ตรวจสอบ' where id=id </li>
     </ol>
 </div>
-
+-->
 <?= \bluezed\scrollTop\ScrollTop::widget() ?>
