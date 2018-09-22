@@ -72,9 +72,9 @@ AppAsset::register($this);
             if (!Yii::$app->user->isGuest && Yii::$app->user->identity->role != 99) {
 
                 $risk_mnu_itms[] = ['label' => '<span class="glyphicon glyphicon-thumbs-up"></span> ทบทวนความเสี่ยง', 'url' => ['riskreview/index'],
-                                        'items' => [['label' => 'มี Risk มาถึงคุณ', 'url'=> ['/riskregister/touse']],
-                                                    ['label' => 'มี Risk มาถึงแผนก-ฝ่าย', 'url'=> ['/riskregister/todep']],
-                                                    ['label' => 'มี Risk มาถึงทีม', 'url'=> ['/riskregister/toteam']],
+                                        'items' => [['label' => 'มี Risk มาถึงคุณ', 'url'=> ['/riskreview/touse']],
+                                                    ['label' => 'มี Risk มาถึงแผนก', 'url'=> ['/riskreview/todep']],
+                                                    ['label' => 'มี Risk มาถึงทีม', 'url'=> ['/riskreview/toteam']],
                                         ],'visible' => !Yii::$app->user->isGuest && Yii::$app->user->identity->role != 99 
                                    ];
                 $risk_mnu_itms[] = ['label' => '<span class="glyphicon glyphicon-saved"></span> ตรวจสอบความเสี่ยง', 'url' => ['risk/approve'],'visible' => !Yii::$app->user->isGuest && Yii::$app->user->identity->role != 3 ];

@@ -9,9 +9,9 @@ use kartik\detail\DetailView;
 /* @var $this yii\web\View */
 /* @var $model frontend\models\Riskregister */
 
-$this->title =''. ' '.'โปรแกรมความเสี่ยง : ' . ' ' . $model->programname. ' '.'ความเสี่ยง : ' . ' ' . $model->storename. ' '.'สถานะ : ' . ' ' . $model->status_risk ;
-$this->params['breadcrumbs'][] = ['label' => 'ตรวจสอบความเสี่ยง', 'url' => ['risk/approve']];
-$this->params['breadcrumbs'][] = 'ความเสี่ยงที่ผ่านการยืนยันแล้ว';
+$this->title =''. ' '.'โปรแกรมความเสี่ยง : ' . ' ' . $model->programname. ' '.'ความเสี่ยง : ' . ' ' . $model->storename. ' '.'ส่งถึงทีม : ' . ' ' . $model->teamname ;
+$this->params['breadcrumbs'][] = ['label' => 'ทบทวนความเสี่ยง', 'url' => ['riskreview/toteam']];
+//$this->params['breadcrumbs'][] = 'ความเสี่ยงที่ผ่านการยืนยันแล้ว';
 
 ?>
 <div class="riskregister-view">
@@ -21,19 +21,6 @@ $this->params['breadcrumbs'][] = 'ความเสี่ยงที่ผ่�
         </button> 
         <h4><span class="glyphicon glyphicon-time" aria-hidden="true"></span> <?= Html::encode($this->title) ?></h4> 
     </div>
-    <p>
-        <?php
-        if (!Yii::$app->user->isGuest && Yii::$app->user->identity->role != 3) {
-           echo Html::a('<i class="glyphicon glyphicon-pencil">แก้ไขการลงทะเบียน</i>', ['update', 'id' => $model->id, 'id_risk' => $model->id_risk], ['class' => 'btn btn-primary']);
-       
-        } else {
-            
-            echo Html::a('<i class="glyphicon glyphicon-pencil">แก้ไขการลงทะเบียน</i>', ['update', 'id' => $model->id, 'id_risk' => $model->id_risk], ['class' => 'btn btn-primary', 'style' => 'display: none;']);
-        }
-        ?>
-
-    </p>
-
             <?=
             DetailView::widget([
                 'model' => $model,
@@ -120,7 +107,7 @@ $this->params['breadcrumbs'][] = 'ความเสี่ยงที่ผ่�
                                 [
                                     'attribute' => 'programname',
                                     'format' => 'raw',
-                                    //'label' => 'โปรแกรมความเสี่ยง',
+                                    //'label' => 'ผู้ลงทะเบียน',
                                     'value' => $model->programname,
                                     'valueColOptions' => ['style' => 'width:30%'],
                                     'displayOnly' => true,

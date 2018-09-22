@@ -132,7 +132,7 @@ $this->title = 'ความเสี่ยง';
                             return '<i class="glyphicon glyphicon-remove"></i>..รายงานไม่สำเร็จ';
                         }
                     },
-                ],
+            ],
             //'loginname',
             //'created_by',
             //'updated_by',

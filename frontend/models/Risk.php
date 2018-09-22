@@ -129,7 +129,7 @@ class Risk extends \yii\db\ActiveRecord
             'affected' => 'ผู้เสียหาย/ได้รับผลกระทบ',
             'edit' => 'การแก้ปัญหา',
             'problem_basic' => 'วิธีแก้ปัญหาเบื้องต้น',
-            'image' => 'ภาพถ่าย',
+            'image' => 'รูปภาพ',
             'inform_id' => 'ที่มาของรายงาน',
             'status_risk' => 'สถานะความเสี่ยง',
             'created_by' => 'บันทึกโดย',

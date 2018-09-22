@@ -43,7 +43,7 @@ class RiskregisterController extends Controller
      */
     public $enableCsrfValidation = false;
     
-     public function behaviors() 
+    public function behaviors() 
     {
         $role = 0;
         if (!Yii::$app->user->isGuest) {
@@ -51,7 +51,7 @@ class RiskregisterController extends Controller
         }
         $arr = ['index'];
         if ($role != 99) {
-            $arr = ['view','create', 'update', 'delete','views','use','dep', 'team']; //action login ok ต้องเข้าสู่ระบบ และ role ไม่เท่ากับ 99 (Waiting)
+            $arr = ['view','create', 'update', 'delete','views','viewuse','viewdep','viewteam']; //action login ok ต้องเข้าสู่ระบบ และ role ไม่เท่ากับ 99 (Waiting)
         }
         return [
             'verbs' => [
@@ -65,7 +65,7 @@ class RiskregisterController extends Controller
                 'ruleConfig' => [
                     'class' => AccessRule::className(),
                 ],
-                'only' => ['view','create', 'update', 'delete','use','dep', 'team'],  //ถ้าไม่ระบุแสดงว่าไม่ต้องตรวจสอบสิทธิ
+                'only' => ['view','create', 'update', 'delete','viewuse','viewdep','viewteam'],  //ถ้าไม่ระบุแสดงว่าไม่ต้องตรวจสอบสิทธิ
                 'rules' => [
                     [
                         'allow' => true,
@@ -85,53 +85,7 @@ class RiskregisterController extends Controller
     {
         return $this->goHome();
     }
-    public function actionTouse()
-    {
-        $searchModel = new RiskregisterSearch();
-        $searchModel->status_risk = 'ตรวจสอบ';
-        $searchModel->sendto_member_cid =Yii::$app->user->identity->cid;
-       
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
-        return $this->render('use', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
-        ]);
-    }
-    
-    public function actionTodep()
-    {
-        $cid_d= Yii::$app->user->identity->cid;
-        $sql_dep = Yii::$app->db->createCommand("SELECT department_id FROM member  WHERE cid='$cid_d'")->queryOne();
-        $dep_id =  $sql_dep['department_id'];
-
-        $searchModel = new RiskregisterSearch();
-        $searchModel->sendto_department_id = $dep_id;
-        $searchModel->status_risk = 'ตรวจสอบ';
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-
-        return $this->render('dep', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
-        ]);
-    }
-    
-    public function actionToteam()
-    {
-        $cid_t= Yii::$app->user->identity->cid;
-        $sql_te = Yii::$app->db->createCommand("SELECT IFNULL(team_id,0) AS team_id FROM member  WHERE cid='$cid_t'")->queryOne();
-        $te_id =  $sql_te['team_id'];
-        
-        $searchModel = new RiskregisterSearch();
-        $searchModel->sendto_team_id = $te_id;
-        $searchModel->status_risk = 'ตรวจสอบ';
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-
-        return $this->render('team', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
-        ]);
-    }
 
     public function actionView($id, $id_risk)
     {
@@ -139,13 +93,34 @@ class RiskregisterController extends Controller
             'model' => $this->findModel($id, $id_risk),
         ]);
     }
-    
+
     public function actionViews($id, $id_risk)
     {
         return $this->render('views', [
             'model' => $this->findModel($id, $id_risk),
         ]);
     }
+    
+    public function actionViewuse($id, $id_risk)
+    {
+        return $this->render('viewuse', [
+            'model' => $this->findModel($id, $id_risk),
+        ]);
+    }
+    
+    public function actionViewdep($id, $id_risk)
+    {
+        return $this->render('viewdep', [
+            'model' => $this->findModel($id, $id_risk),
+        ]);
+    }
+    public function actionViewteam($id, $id_risk)
+    {
+        return $this->render('viewteam', [
+            'model' => $this->findModel($id, $id_risk),
+        ]);
+    }
+
 
 
     public function actionCreate()
@@ -228,9 +203,8 @@ class RiskregisterController extends Controller
         
         $this->sendLine($model,$id, $id_risk); // ส่งไปให้ Function sendLine
             Yii::$app->session->setFlash('success', 'ส่งความเสียงไปทบทวนเรียบร้อยแล้ว');
-           // return $this->redirect(['view', 'id' => $model->id, 'id_risk' => $model->id_risk]);
-          
-            return $this->redirect('index.php?r=risk/approve');
+            return $this->redirect(['view', 'id' => $model->id, 'id_risk' => $model->id_risk]);
+            //return $this->redirect('index.php?r=risk/approve');
         }
 
         return $this->render('update', [

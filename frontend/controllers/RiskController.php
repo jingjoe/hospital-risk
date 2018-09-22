@@ -90,11 +90,6 @@ class RiskController extends Controller
         ];
     }
 
-    /**
-     * Lists all Risk models.
-     * @return mixed
-     */
-
     public function actionIndex()
     {
         $id_r= Yii::$app->user->identity->id; 
@@ -117,12 +112,7 @@ class RiskController extends Controller
         ]);
     }
 
-    /**
-     * Displays a single Risk model.
-     * @param integer $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
-     */
+
     public function actionView($id)
     {
         return $this->render('view', [
@@ -130,11 +120,7 @@ class RiskController extends Controller
         ]);
     }
 
-    /**
-     * Creates a new Risk model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return mixed
-     */
+
     public function actionCreate()
     {
         $model = new Risk();
@@ -166,13 +152,7 @@ class RiskController extends Controller
     }
     }
 
-    /**
-     * Updates an existing Risk model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
-     */
+
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
@@ -202,13 +182,7 @@ class RiskController extends Controller
         ]);
     }
     
-    /**
-     * Deletes an existing Risk model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
-     */
+
     public function actionDelete($id)
     {
         $this->findModel($id)->delete();
@@ -216,13 +190,7 @@ class RiskController extends Controller
         return $this->redirect(['index']);
     }
 
-    /**
-     * Finds the Risk model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param integer $id
-     * @return Risk the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
-     */
+
     protected function findModel($id)
     {
         if (($model = Risk::findOne($id)) !== null) {

@@ -33,7 +33,9 @@
         "yii2mod/yii2-sweet-alert": "*",
         "miloschuman/yii2-highcharts-widget": "^6.0",
         "rmrevin/yii2-fontawesome": "~2.17",
-        "wbraganca/yii2-dynamicform": "*"
+        "wbraganca/yii2-dynamicform": "*",
+        "kartik-v/yii2-checkbox-x": "*",
+        "unclead/yii2-multiple-input": "~2.0"
 
     },
     "require-dev": {
