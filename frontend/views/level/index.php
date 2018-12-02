@@ -95,7 +95,14 @@ $this->params['breadcrumbs'][] = $this->title;
 //                'contentOptions' => 
 //                ['style'=>'max-width: 350px; overflow: auto; word-wrap: break-word;'],
 //            ],
-            'level_name',
+            //'level_name',
+			[
+				'attribute' => 'level_name',
+				'format' => 'raw',
+				'contentOptions' => [
+					'style'=>'max-width:1000px; overflow: auto; white-space: normal; word-wrap: break-word;'
+				],
+			],
             'warningname',
             //'typename',
             //'create_date',

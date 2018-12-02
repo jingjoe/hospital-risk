@@ -47,6 +47,7 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             'responsive' => true,
             'hover'=>true,
+			'floatHeader' => true,  // header เลื่อนตาม
             'pager' => [
                     'options'=>['class'=>'pagination'],   // set clas name used in ui list of pagination
                     'prevPageLabel' => 'ก่อนหน้า',   // Set the label for the "previous" page button

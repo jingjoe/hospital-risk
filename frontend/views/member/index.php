@@ -38,17 +38,18 @@ $this->params['breadcrumbs'][] = $this->title;
         <br>   
         <?= GridView::widget([
             'dataProvider' => $dataProvider,
-             //'filterModel' => $searchModel,
+            'filterModel' => $searchModel,
             'headerRowOptions' => ['style' => 'background-color:#cccccc'],
             'panel'=>[
                 'type'=>GridView::TYPE_DEFAULT,
                 'before'=>Html::button('<i class="glyphicon glyphicon-plus"></i> เพิ่มข้อมูล',  ['value' => Url::to(['member/create']), 'title' => 'เพิ่มข้อมูลบุคลากร', 'class' => 'showModalButton btn btn-success']),
-                //'heading'=>'สถานที่เกิดความเสี่ยง',
+                'heading'=>'<span class="glyphicon glyphicon-ok-sign"></span> = ยังปฏิบัติงานอยู่ | <span class="glyphicon glyphicon-remove-sign"></span> = ไม่ได้ปฏิบัติงานแล้ว',
                 //'after' => 'วันที่ประมวลผล '.date('Y-m-d H:i:s').' น.',
                 //'footer'=>true
             ],
             'responsive' => true,
             'hover'=>true,
+			'floatHeader' => true,  // header เลื่อนตาม
             'pager' => [
                     'options'=>['class'=>'pagination'],   // set clas name used in ui list of pagination
                     'prevPageLabel' => 'Previous',   // Set the label for the "previous" page button
@@ -90,6 +91,8 @@ $this->params['breadcrumbs'][] = $this->title;
             [
             'options'=>['style'=>'width:110px;'],
             'format'=>'raw',
+            'hAlign' => 'center',
+            'vAlign' => 'middle',
             'attribute'=>'img',
             'value'=>function($model){
               return Html::tag('div','',[
@@ -102,15 +105,82 @@ $this->params['breadcrumbs'][] = $this->title;
                           ']);
             }
             ],
-            'cid',
-            'member_name',
-            'departname',
-            //'positionname',
-            'teamname',
-            'create_date',
-            //'modify_date',
-            'loginname',
-            //'updatename',
+            [
+                'label' => 'เลข 13 หลัก',
+                'attribute' => 'cid',
+                'hAlign' => 'center',
+                'vAlign' => 'middle',
+            ],
+            [
+                //'label' => 'ชือ-นามสกุล',
+                'attribute' => 'member_name',
+                //'hAlign' => 'center',
+                'vAlign' => 'middle',
+            ],
+            [
+                'attribute' => 'department_id',
+                'value' => 'depart.depart_name',
+                'label' => 'แผนกที่รายงาน',
+                'width' => '150px',
+                'filterType' => GridView::FILTER_SELECT2,
+                'filter' => Department::GetListName(),
+                'filterWidgetOptions' => [
+                    'pluginOptions' => ['allowClear' => true],
+                    ],
+                'filterInputOptions' => ['placeholder' => 'กรุณาเลือก'],
+                //'hAlign' => 'center',
+                'vAlign' => 'middle',
+                //'group' => true,
+            ],
+
+            [
+                'attribute' => 'position_id',
+                'value' => 'position.position_name',
+                'label' => 'ตำแหน่ง',
+                'width' => '150px',
+                'filterType' => GridView::FILTER_SELECT2,
+                'filter' => Position::GetListName(),
+                'filterWidgetOptions' => [
+                    'pluginOptions' => ['allowClear' => true],
+                    ],
+                'filterInputOptions' => ['placeholder' => 'กรุณาเลือก'],
+                //'hAlign' => 'center',
+                'vAlign' => 'middle',
+                //  'group' => true,
+            ],
+                    
+            [
+                'attribute' => 'team_id',
+                'value' => 'team.team_name',
+                'label' => 'ทีมนำ',
+                'width' => '150px',
+                'filterType' => GridView::FILTER_SELECT2,
+                'filter' => Team::GetListName(),
+                'filterWidgetOptions' => [
+                    'pluginOptions' => ['allowClear' => true],
+                    ],
+                'filterInputOptions' => ['placeholder' => 'กรุณาเลือก'],
+                //'hAlign' => 'center',
+                'vAlign' => 'middle',
+                //'group' => true,
+            ],
+   
+            [
+            'label' => 'สถานะ',
+            'attribute' => 'status',
+            'format' => 'raw',
+            'filter' => false,
+            'hAlign' => 'center',
+            'vAlign' => 'middle',
+            #'format' => ['decimal', 2],
+            'value' => function($data) {
+                    if ($data['status'] > '0') {
+                        return '<span class="glyphicon glyphicon-ok-sign"></span>';
+                    } else {
+                        return '<span class="glyphicon glyphicon-remove-sign"></span>';
+                    }
+                },
+            ],
 
             //['class' => 'yii\grid\ActionColumn'],
             [

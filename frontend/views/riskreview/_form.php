@@ -125,7 +125,7 @@ use yii\helpers\VarDumper;
         <div class="col-md-12 col-xs-12">
             <?=
             $form->field($model, 'review_cid')->widget(Select2::classname(), [
-                'data' => ArrayHelper::map(Member::find()->all(), 'cid', 'member_name'),
+                'data' => ArrayHelper::map(Member::find()->all(), 'member_name', 'member_name'),
                 'options' => ['placeholder' => 'เลือกผู้ร่วมทบทวน'],
                 'pluginOptions' => [
                     'allowClear' => true,

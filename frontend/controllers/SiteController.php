@@ -74,7 +74,56 @@ class SiteController extends Controller
     public function actionIndex()
     {
           if (!Yii::$app->user->isGuest) {
-            return $this->render('index');
+              
+                $ir= Yii::$app->user->identity->id;
+                
+                $cid_d= Yii::$app->user->identity->cid;
+                
+                $sql_dep = Yii::$app->db->createCommand("SELECT department_id FROM member  WHERE cid='$cid_d'")->queryOne();
+                $dep_id =  $sql_dep['department_id'];
+                
+                $sql_te = Yii::$app->db->createCommand("SELECT IFNULL(team_id,0) AS team_id FROM member  WHERE cid='$cid_d'")->queryOne();
+                $te_id =  $sql_te['team_id'];
+        
+                $use = "SELECT COUNT(id) AS cc,status_risk FROM riskregister WHERE sendto_member_cid=$cid_d AND  status_risk ='ตรวจสอบ' ";
+                $dep = "SELECT COUNT(id) AS cc,status_risk FROM riskregister WHERE sendto_department_id=$dep_id AND  status_risk ='ตรวจสอบ' ";
+                $team = "SELECT COUNT(id) AS cc,status_risk FROM riskregister WHERE sendto_team_id=$te_id AND  status_risk ='ตรวจสอบ' ";
+                $all = "SELECT COUNT(id) AS cc FROM riskregister WHERE created_by=$ir ";
+                $status = "SELECT 'สถานะรายงาน' AS st,COUNT(id) AS c
+                           FROM riskregister
+                           WHERE created_by=$ir AND status_risk='รายงาน'
+
+                           UNION
+                           SELECT 'สถานะตรวจสอบ' AS st,COUNT(id) AS c
+                           FROM riskregister
+                           WHERE created_by=$ir AND status_risk='ตรวจสอบ'
+
+                           UNION
+                           SELECT 'สถานะทบทวน' AS st,COUNT(id) AS c
+                           FROM riskregister
+                           WHERE created_by=$ir AND status_risk='ทบทวน'
+
+                           UNION
+                           SELECT 'สถานะจำหน่าย' AS st,COUNT(id) AS c
+                           FROM riskregister
+                           WHERE created_by=$ir AND status_risk='จำหน่าย'";
+                
+                $touse= Yii::$app->db->createCommand($use)->queryAll();
+                $todep= Yii::$app->db->createCommand($dep)->queryAll();
+                $toteam= Yii::$app->db->createCommand($team)->queryAll();
+                $toall= Yii::$app->db->createCommand($all)->queryAll();
+                
+                $risk_st= Yii::$app->db->createCommand($status)->queryAll();
+   
+                return $this->render('index',[
+                        'user_ir' => $ir,
+                        'touse' => $touse,
+                        'todep' => $todep,
+                        'toteam' => $toteam,
+                        'toall' => $toall,
+                        'risk_st' => $risk_st,
+                        ]);
+
           } else {
              return $this->render('index2');
           }

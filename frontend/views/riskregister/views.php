@@ -79,15 +79,16 @@ $this->title =''. ' '.'โปรแกรมความเสี่ยง : ' .
                                 [
                                     'attribute'=>'user_ir_type', 
                                     //'label'=>'ประเภทการรายงาน?',
+                                    //'filter' => [1 => 'รายงานตนเอง', 2 => 'รายงานผู้อื่น'],//กำหนด filter แบบ dropDownlist จากข้อมูล array
                                     'format'=>'raw',
                                     'type'=>DetailView::INPUT_SWITCH,
                                     'widgetOptions' => [
                                         'pluginOptions' => [
-                                            '1' => 'รายงานต้นเอง',
+                                            '1' => 'รายงานตนเอง',
                                             '2' => 'รายงานผู้อื่น',
                                         ]
                                     ],
-                                    'value'=>$model->user_ir_type ? '<span class="label label-success">รายงานต้นเอง</span>' : '<span class="label label-danger">รายงานผู้อื่น</span>',
+                                    'value'=>$model->user_ir_type == 1 ? '<span class="label label-success">รายงานตนเอง</span>' : '<span class="label label-danger">รายงานผู้อื่น</span>',
                                     'valueColOptions'=>['style'=>'width:35%']
                                 ],
                             ],

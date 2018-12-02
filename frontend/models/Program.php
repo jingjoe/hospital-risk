@@ -78,7 +78,7 @@ class Program extends \yii\db\ActiveRecord
     }
     
      // get ประเภทความเสี่ยง
-        public function getType() {
+    public function getType() {
         return @$this->hasOne(Type::className(), ['id' => 'type_id']);
     }
 
@@ -100,7 +100,7 @@ class Program extends \yii\db\ActiveRecord
         return @$this->update->username;
     }
     
-       public static function GetListName(){
+    public static function GetListName(){
         return ArrayHelper::map(self::find()->all(), 'program_id', 'program_name');
     } 
 }

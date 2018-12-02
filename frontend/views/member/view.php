@@ -36,7 +36,23 @@ $this->params['breadcrumbs'][] = ['label' => 'ข้อมูลบุคลา�
             'create_date',
             'modify_date',
             'loginname',
-            'updatename'
+            'updatename',
+            [
+                'label' => 'สถานะ',
+                'attribute' => 'status',
+                'format' => 'raw',
+                'filter' => false,
+                'hAlign' => 'center',
+                'vAlign' => 'middle',
+                #'format' => ['decimal', 2],
+                'value' => function($data) {
+                    if ($data['status'] > '0') {
+                        return '<span class="glyphicon glyphicon-ok-sign"></span> ยังปฏิบัติงานอยู่';
+                    } else {
+                        return '<span class="glyphicon glyphicon-remove-sign"></span> ไม่ได้ปฏิบัติงานแล้ว';
+                    }
+                },
+            ],
         ],
     ]) ?>
 

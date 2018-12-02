@@ -29,14 +29,15 @@ $this->title = 'ความเสี่ยง';
             'headerRowOptions' => ['style' => 'background-color:#cccccc'],
             'panel'=>[
                 'type'=>GridView::TYPE_DEFAULT,
-                'before'=>Html::a('<i class="glyphicon glyphicon-send"></i> รายงานความเสี่ยง', ['risk/create'], ['class' => 'btn btn-success', 'title' => 'รายงานความเสี่ยง']) .' '.Html::a('<i class="glyphicon glyphicon-search"></i> รายงานความเสี่ยง', ['risk/searchrisk'], ['class' => 'btn btn-warning' , 'title' => 'ค้นหาชื่อความเสี่ยง']),
+                'before'=>Html::a('<i class="glyphicon glyphicon-send"></i> รายงานความเสี่ยง', ['risk/create'], ['class' => 'btn btn-success', 'title' => 'รายงานความเสี่ยง']) .' '.Html::a('<i class="glyphicon glyphicon-search"></i> ค้นหาชื่อความเสี่ยง', ['risk/searchrisk'], ['class' => 'btn btn-warning' , 'title' => 'ค้นหาชื่อความเสี่ยง']),
                 //'heading'=>'สถานที่เกิดความเสี่ยง',
                 //'after' => 'วันที่ประมวลผล '.date('Y-m-d H:i:s').' น.',
                 //'footer'=>true
             ],
             'responsive' => true,
+            'responsiveWrap' => false,
             'hover'=>true,
-            'floatHeader' => true,  // header เลื่อนตาม
+            //'floatHeader' => true,  // header เลื่อนตาม
             'pager' => [
                     'options'=>['class'=>'pagination'],   // set clas name used in ui list of pagination
                     'prevPageLabel' => 'ก่อนหน้า',   // Set the label for the "previous" page button

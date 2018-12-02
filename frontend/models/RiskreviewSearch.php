@@ -65,6 +65,7 @@ class RiskreviewSearch extends Riskreview
             'riskvisit' => $this->riskvisit,
             'review_date' => $this->review_date,
             'repeat' => $this->repeat,
+            'status_risk' => $this->status_risk,
             'review_time' => $this->review_time,
             'reviewresults_id' => $this->reviewresults_id,
             'created_by' => $this->created_by,
@@ -76,6 +77,7 @@ class RiskreviewSearch extends Riskreview
         $query->andFilterWhere(['like', 'riskvisit', $this->riskvisit])
             ->andFilterWhere(['like', 'repeat', $this->repeat])
             ->andFilterWhere(['like', 'discharge', $this->discharge])
+            ->andFilterWhere(['like', 'status_risk', $this->status_risk])
             ->andFilterWhere(['like', 'token_upload', $this->token_upload])
             ->andFilterWhere(['like', 'files', $this->files])
             ->andFilterWhere(['like', 'notereview', $this->notereview])

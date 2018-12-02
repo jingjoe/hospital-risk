@@ -3,6 +3,7 @@
 namespace frontend\models;
 
 use Yii;
+use yii\helpers\ArrayHelper;
 use yii\db\Expression;
 use yii\behaviors\TimestampBehavior;
 use yii\behaviors\BlameableBehavior;
@@ -84,5 +85,9 @@ class Status extends \yii\db\ActiveRecord
     public function getUpdatename() {
         return @$this->update->username;
     }
+    
+    public static function GetListName(){
+        return ArrayHelper::map(self::find()->all(), 'status_name', 'status_name');
+    } 
 }
 

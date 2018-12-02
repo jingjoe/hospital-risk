@@ -32,6 +32,9 @@ use yii\helpers\Json;
 use yii\helpers\BaseFileHelper;
 use yii\helpers\Html;
 
+// follow
+use frontend\models\Department;
+
 
 /**
  * RiskregisterController implements the CRUD actions for Riskregister model.
@@ -51,7 +54,7 @@ class RiskregisterController extends Controller
         }
         $arr = ['index'];
         if ($role != 99) {
-            $arr = ['view','create', 'update', 'delete','views','viewuse','viewdep','viewteam']; //action login ok ต้องเข้าสู่ระบบ และ role ไม่เท่ากับ 99 (Waiting)
+            $arr = ['view','create', 'update', 'delete','views','viewuse','viewdep','viewteam','follow','print']; //action login ok ต้องเข้าสู่ระบบ และ role ไม่เท่ากับ 99 (Waiting)
         }
         return [
             'verbs' => [
@@ -65,7 +68,7 @@ class RiskregisterController extends Controller
                 'ruleConfig' => [
                     'class' => AccessRule::className(),
                 ],
-                'only' => ['view','create', 'update', 'delete','viewuse','viewdep','viewteam'],  //ถ้าไม่ระบุแสดงว่าไม่ต้องตรวจสอบสิทธิ
+                'only' => ['view','create', 'update', 'delete','viewuse','viewdep','viewteam','follow','print'],  //ถ้าไม่ระบุแสดงว่าไม่ต้องตรวจสอบสิทธิ
                 'rules' => [
                     [
                         'allow' => true,
@@ -93,13 +96,25 @@ class RiskregisterController extends Controller
             'model' => $this->findModel($id, $id_risk),
         ]);
     }
-
-    public function actionViews($id, $id_risk)
+    
+     public function actionLink($link_key)
     {
+        //$model = Riskregister::find()->where(['link_kye' => $link_kye])->one();
+   
+        $sql_key = Yii::$app->db->createCommand("SELECT id,id_risk FROM riskregister  WHERE link_key='$link_key'")->queryOne();
+        $id =  $sql_key['id'];
+        $id_risk =  $sql_key['id_risk'];
         return $this->render('views', [
             'model' => $this->findModel($id, $id_risk),
         ]);
     }
+    
+//    public function actionViews($id, $id_risk)
+//    {
+//        return $this->render('views', [
+//            'model' => $this->findModel($id, $id_risk),
+//        ]);
+//    }
     
     public function actionViewuse($id, $id_risk)
     {
@@ -140,13 +155,16 @@ class RiskregisterController extends Controller
     public function sendLine($model,$id, $id_risk){
         
         $model = Riskregister::find()->where(['id' => $id,'id_risk' => $id_risk])->one();
+
+        $sql_key = Yii::$app->db->createCommand("SELECT link_key FROM riskregister  WHERE id=$id AND id_risk = $id_risk")->queryOne();
+        $link_key =  $sql_key['link_key'];
         
-        $url = Url::to(['riskregister/views', 'id' => $id,'id_risk'=>$id_risk], true);
+        $link = Url::to(['riskregister/link&link_key='.$link_key], true);
 
         $command1 = Yii::$app->db->createCommand("SELECT linetoken FROM hospital WHERE id='1' ");
         $line_token = $command1->queryScalar();
         
-	//$line_token = "Rh8MR5G3fkKgvxKTab5zVhhpdaIk4HGZobYhjvzhdlf";
+        //$line_token = "Rh8MR5G3fkKgvxKTab5zVhhpdaIk4HGZobYhjvzhdlf";
         //$line_token = "";
         if ($line_token <> '') {
             $ch = curl_init();  
@@ -154,7 +172,7 @@ class RiskregisterController extends Controller
             curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0); 
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0); 
             curl_setopt($ch, CURLOPT_POST, 1);
-            curl_setopt($ch, CURLOPT_POSTFIELDS,"message=".'ความเสี่ยง : ' .$model->id_risk. ' วันที่รายงาน : ' .$model->date_report. ' เหตุการณ์ : ' .$model->detail.' ระดับการทบทวน : ' . $model->repeat_code. ' สถานะ : ' .$model->status_risk.' Read more : ' . $url); // ตรงนี้คือ Field ที่จะส่งข้อความไป Line
+            curl_setopt($ch, CURLOPT_POSTFIELDS,"message=".'ความเสี่ยง : ' .$model->id_risk. ' วันที่รายงาน : ' .$model->date_report. ' เหตุการณ์ : ' .$model->detail.' ระดับการทบทวน : ' . $model->repeat_code. ' สถานะ : ' .$model->status_risk.' Read more : ' . $link); // ตรงนี้คือ Field ที่จะส่งข้อความไป Line
 
             // follow redirects
             curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
@@ -190,7 +208,8 @@ class RiskregisterController extends Controller
         $level = ArrayHelper::map($this->GetLevel($model->level_id),'id','name');
 
         $url_link = Url::to(['riskregister/views', 'id' => $id,'id_risk'=>$id_risk], true); // ลิงค์แบบเต็ม http://localhost/myweb/controller/action=para1=para2
-  
+        
+        $model->link_key = substr(Yii::$app->getSecurity()->generateRandomString(), 5); 
         $model->register_date = date('Y-m-d');   
         $model->refer_type= 1;
         $connection = Yii::$app->db;
@@ -222,6 +241,7 @@ class RiskregisterController extends Controller
 
         throw new NotFoundHttpException('The requested page does not exist.');
     }
+    
 // function ดึงชื่อความเสี่ยง DepDrop 3 ตัวเลือก
     public function actionGetRisk() {
         $out = [];
@@ -270,4 +290,69 @@ class RiskregisterController extends Controller
         }
         return $obj;
     }
+ 
+// ติดตามความเสี่ยง follow
+    public function actionFollow(){
+       
+        $searchModel = new RiskregisterSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider->pagination->pageSize=10;
+        
+        $dataProvider->sort->enableMultiSort = true;
+        $dataProvider->sort->defaultOrder = [
+                 'date_report' => SORT_DESC,
+               //'create_date' => SORT_ASC, 
+        ];
+        
+        return $this->render('follow', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
+    }
+    
+    public function actionPrint($id=NULL ,$id_risk=NULL) {
+       
+        if (Yii::$app->request->isPost) {
+            $id = $_POST['id'];
+            $id_risk = $_POST['id_risk'];
+        }
+            $sql1 = "SELECT r.id,r.id_risk,r.date_report,r.time_report,m.member_name AS use_rep,d.depart_name,p.program_name,s.riskstore_name,
+                    le.level_name,di.duration_name,lo.`name` AS locat_name,IF(r.user_ir_type=1,'รายงานตนเอง','รายงานผู้อื่น') AS ir_type,d1.depart_name AS ir,
+                    r.detail,r.url,r.affected,r.edit,r.problem_basic,r.status_risk
+                    FROM riskregister r
+                    LEFT OUTER JOIN duration di ON di.id=r.duration_id
+                    LEFT OUTER JOIN location lo ON lo.id=r.location_id
+                    LEFT OUTER JOIN `level` le ON le.level_code=r.level_id
+                    LEFT OUTER JOIN department d ON d.id=r.department_id
+                    LEFT OUTER JOIN department d1 ON d1.id=r.user_ir
+                    LEFT OUTER JOIN program p ON p.program_id=r.program_id
+                    LEFT OUTER JOIN riskstore s ON s.riskstore_id=r.riskstore_id
+                    LEFT OUTER JOIN `user` u ON u.id=r.created_by
+                    LEFT OUTER JOIN member m ON m.cid collate utf8_general_ci=u.cid collate utf8_general_ci
+                    WHERE r.id=$id AND r.id_risk=$id_risk ";
+    
+            $sql2 = "SELECT v.riskvisit,v.count,CONCAT(v.review_date,' ',v.review_time) AS review_datetime,v.notereview,v.files,
+                    m1.member_name AS review_main,v.review_cid,l.reviewresults_name,v.status_risk AS st_review,
+                    IF(v.`repeat`='Y','ทบทวนซ้ำ','ไม่ทบทวน') AS rep,IF(v.discharge='Y','จำหน่าย','ไม่จำหน่าย') AS dc
+                    FROM  riskreview v 
+                    LEFT OUTER JOIN `user` u ON u.id=v.created_by
+                    LEFT OUTER JOIN `user` u1 ON u1.id=v.created_by
+                    LEFT OUTER JOIN member m1 ON m1.cid collate utf8_general_ci=u1.cid collate utf8_general_ci
+                    LEFT OUTER JOIN member m2 ON m2.cid collate utf8_general_ci=v.review_cid collate utf8_general_ci
+                    LEFT OUTER JOIN reviewresults l ON  l.id=v.reviewresults_id
+                    WHERE v.riskregister_id=$id AND v.risk_id=$id_risk
+                    ORDER BY v.count ";
+
+            $rawData1 = Yii::$app->db->createCommand($sql1)->queryAll();
+            $rawData2 = Yii::$app->db->createCommand($sql2)->queryAll();
+                   
+
+        return $this->render('print', [
+              'id' => $id,
+              'id_risk' => $id_risk,
+              'data1' =>$rawData1,
+              'data2' =>$rawData2,
+        ]);
+    }
+    
 }

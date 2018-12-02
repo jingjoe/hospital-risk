@@ -95,9 +95,14 @@ class RiskreviewController extends Controller
      */
     public function actionIndex()
     {
+        $id_r= Yii::$app->user->identity->id; 
+       
         $searchModel = new RiskreviewSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-
+        
+        //$dataProvider->query->groupBy(['risk_id']);
+        $dataProvider->query->andWhere(['created_by'=> $id_r]); //  ดึงเฉพาะที่ risk status = รายงาน และ ตรวจสอบผู้ใช้ให้แสดงข้อมูลเฉพาะของตัวเอง
+       
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
@@ -205,27 +210,32 @@ class RiskreviewController extends Controller
         ]);
     }
 
-
-    public function actionView($id, $riskvisit)
+    public function actionView($id,$id_regist, $riskvisit)
     {
+       
+        $model2 = Riskregister::find()->where(['id' => $id_regist])->one();
+        
+       // $searchModel2 = new RiskregisterSearch();
+
         return $this->render('view', [
             'model' => $this->findModel($id, $riskvisit),
+            'model2' => $model2,
         ]);
     }
-
-
-    public function actionCreate($risk_id, $riskregister_id)
+    
+    public function actionCreate($id_regist, $id_risk)
     {
         $connection = Yii::$app->db;
         $model = new Riskreview();
         
-        $model->token_upload = substr(Yii::$app->getSecurity()->generateRandomString(), 10);  
+        $model->token_upload = substr(Yii::$app->getSecurity()->generateRandomString(), 10);         
         $model->review_date = date('Y-m-d'); 
 
         if ($model->load(Yii::$app->request->post())) {
-            $model->risk_id = $risk_id;
-            $model->riskregister_id = $riskregister_id;
+            $model->risk_id = $id_risk;
+            $model->riskregister_id = $id_regist;
             $model->riskvisit = date('Ymdhms');
+            $model->count = 1;
                 //die(print_r($model->attributes));
                 //$this->Uploads(false);
             
@@ -237,14 +247,60 @@ class RiskreviewController extends Controller
                 $image->saveAs('riskfiles/' . $fileName);
 
                 if ($model->save()) {
-                    $st1 = $connection->createCommand("UPDATE riskregister SET status_risk = 'ทบทวน' WHERE id_risk='$riskregister_id'")->execute();
+                    $st1 = $connection->createCommand("UPDATE riskregister SET status_risk = 'ทบทวน' WHERE id='$id_regist'")->execute();
                     Yii::$app->session->setFlash('success', 'ทบทวนความเสี่ยงเรียบร้อยแล้ว');
-                    return $this->redirect(['view', 'id' => $model->id, 'riskvisit' => $model->riskvisit]);
+                    return $this->redirect(['view', 'id' => $model->id,'id_regist' => $model->riskregister_id,'riskvisit' => $model->riskvisit]);
                 }
                 } else if ($model->save()) {
-                    $st1 = $connection->createCommand("UPDATE riskregister SET status_risk = 'ทบทวน' WHERE id_risk='$riskregister_id'")->execute();
+                    $st1 = $connection->createCommand("UPDATE riskregister SET status_risk = 'ทบทวน' WHERE id_risk='$id_risk'")->execute();
                     Yii::$app->session->setFlash('success', 'ทบทวนความเสี่ยงเรียบร้อยแล้ว');
-                    return $this->redirect(['view', 'id' => $model->id, 'riskvisit' => $model->riskvisit]);
+                    return $this->redirect(['view', 'id' => $model->id,'id_regist' => $model->riskregister_id, 'riskvisit' => $model->riskvisit]);
+                }
+        }
+
+        return $this->render('create', [
+            'model' => $model,
+        ]);
+    }
+// ทบทวนความเสี่ยงซ้ำ
+    public function actionRepeat($id_regist, $id_risk)
+    {
+        $connection = Yii::$app->db;
+        $model = new Riskreview();
+        
+        $model->token_upload = substr(Yii::$app->getSecurity()->generateRandomString(), 10);         
+        $model->review_date = date('Y-m-d'); 
+        
+        $n = 1;
+        $sql_cc = Yii::$app->db->createCommand("SELECT count(*) AS cc FROM riskreview  WHERE risk_id='$id_risk' AND riskregister_id='$id_regist'")->queryOne();
+        $equal = $sql_cc['cc'];
+    
+
+        if ($model->load(Yii::$app->request->post())) {
+            $model->risk_id = $id_risk;
+            $model->riskregister_id = $id_regist;
+            $model->riskvisit = date('Ymdhms');
+            $model->count = $equal+$n;
+            
+            //die(print_r($model->attributes));
+            //$this->Uploads(false);
+            
+            $model->files = UploadedFile::getInstance($model, 'files');
+            if ($model->files && $model->validate()) {
+                $fileName = ($model->files->baseName .'_'. time()) . '.' . $model->files->extension;
+                $image = $model->files;
+                $model->files = $fileName;
+                $image->saveAs('riskfiles/' . $fileName);
+
+                if ($model->save()) {
+                    $st1 = $connection->createCommand("UPDATE riskregister SET status_risk = 'ทบทวน' WHERE id_risk='$id_risk'")->execute();
+                    Yii::$app->session->setFlash('success', 'ทบทวนความเสี่ยงเรียบร้อยแล้ว');
+                    return $this->redirect(['view', 'id' => $model->id,'id_regist' => $model->riskregister_id,'riskvisit' => $model->riskvisit]);
+                }
+                } else if ($model->save()) {
+                    $st1 = $connection->createCommand("UPDATE riskregister SET status_risk = 'ทบทวน' WHERE id_risk='$id_risk'")->execute();
+                    Yii::$app->session->setFlash('success', 'ทบทวนความเสี่ยงเรียบร้อยแล้ว');
+                    return $this->redirect(['view', 'id' => $model->id,'id_regist' => $model->riskregister_id, 'riskvisit' => $model->riskvisit]);
                 }
         }
 
@@ -254,7 +310,8 @@ class RiskreviewController extends Controller
     }
 
 
-    public function actionUpdate($id,$riskregister_id,$riskvisit)
+
+    public function actionUpdate($id,$id_regist,$riskvisit)
     {
         $connection = Yii::$app->db;
          
@@ -274,17 +331,16 @@ class RiskreviewController extends Controller
                 $model->files = $fileName;
                 $image->saveAs('riskfiles/' . $fileName);
                 if ($model->save()) {
-                    $st1 = $connection->createCommand("UPDATE riskregister SET status_risk = 'ทบทวน' WHERE id_risk='$riskregister_id'")->execute();
+                    $st1 = $connection->createCommand("UPDATE riskregister SET status_risk = 'ทบทวน' WHERE id='$id_regist'")->execute();
                     Yii::$app->session->setFlash('success', 'แก้ไขข้อมูลเรียบร้อยแล้ว');
-                    return $this->redirect(['view', 'id' => $model->id, 'riskvisit' => $model->riskvisit]);
+                    return $this->redirect(['view', 'id' => $model->id,'id_regist' => $model->riskregister_id, 'riskvisit' => $model->riskvisit]);
                 }
             } else {
                 $model->files = $tempResume;
                 if ($model->save()) {
-                    $st1 = $connection->createCommand("UPDATE riskregister SET status_risk = 'ทบทวน' WHERE id_risk='$riskregister_id'")->execute();
+                    $st1 = $connection->createCommand("UPDATE riskregister SET status_risk = 'ทบทวน' WHERE id='$id_regist'")->execute();
                     Yii::$app->session->setFlash('success', 'แก้ไขข้อมูลเรียบร้อยแล้ว');
-                    return $this->redirect(['view', 'id' => $model->id, 'riskvisit' => $model->riskvisit]);
-
+                    return $this->redirect(['view', 'id' => $model->id,'id_regist' => $model->riskregister_id, 'riskvisit' => $model->riskvisit]);
                 }
             }
         }
@@ -294,7 +350,7 @@ class RiskreviewController extends Controller
         ]);
     }
 
-    public function actionConf($id,$riskregis_id,$riskvisit) {
+    public function actionConf($id,$id_regist,$riskvisit) {
         
         if (Yii::$app->user->isGuest || Yii::$app->user->identity->role == 99 ) {
               return $this->redirect(['user/security/login']);
@@ -309,7 +365,7 @@ class RiskreviewController extends Controller
         } else {
 
             $data_rv = $connection->createCommand("UPDATE riskreview SET status_risk = 'จำหน่าย' WHERE id='$id' AND riskvisit='$riskvisit'")->execute();
-            $data_re = $connection->createCommand("UPDATE riskregister SET status_risk = 'จำหน่าย' WHERE id='$riskregis_id'")->execute();
+            $data_re = $connection->createCommand("UPDATE riskregister SET status_risk = 'จำหน่าย' WHERE id='$id_regist'")->execute();
             Yii::$app->session->setFlash('success', 'จำหน่ายเรียบร้อยแล้ว');
             return $this->redirect(Yii::$app->request->referrer ?: Yii::$app->homeUrl);
         }     
@@ -336,6 +392,7 @@ class RiskreviewController extends Controller
 // รับค่ามาจาก from เพื่อ ดาวน์โหลด 
     public function actionDownload($type, $id, $riskvisit) {
         $model = $this->findModel($id, $riskvisit);
+        $model->review_cid = $model->getArray($model->review_cid);
         if ($type === 'files') {
             Yii::$app->response->sendFile($model->getDocPath() . '/' . $model->files);
             $model->hits +=1; // นับจำนวนดาวน์โหลด

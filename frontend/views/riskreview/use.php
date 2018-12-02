@@ -125,7 +125,7 @@ $this->title = 'ทบทวนความเสี่ยง risk มาถึ�
                         return Html::a('<i class="glyphicon glyphicon-eye-open"></i> เปิดดู', ['riskregister/viewuse', 'id' => $model2->id,'id_risk' => $model2->id_risk], ['class' => 'btn btn-success btn-xs']);
                     },
                     'create'=>function($url,$model2,$key){                        
-                        return  Html::a('<i class="glyphicon glyphicon-repeat"></i> ทบทวน', ['riskreview/create', 'risk_id' => $model2->id,'riskregister_id' => $model2->id_risk], ['class' => 'btn btn-danger btn-xs']);
+                        return  Html::a('<i class="glyphicon glyphicon-repeat"></i> ทบทวน', ['riskreview/create', 'id_regist' => $model2->id,'id_risk' => $model2->id_risk], ['class' => 'btn btn-danger btn-xs']);
                     },
                   ]
             ],

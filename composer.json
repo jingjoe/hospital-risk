@@ -35,7 +35,9 @@
         "rmrevin/yii2-fontawesome": "~2.17",
         "wbraganca/yii2-dynamicform": "*",
         "kartik-v/yii2-checkbox-x": "*",
-        "unclead/yii2-multiple-input": "~2.0"
+        "unclead/yii2-multiple-input": "~2.0",
+        "kartik-v/yii2-mpdf": "dev-master",
+        "dixonstarter/yii2-pdfprint": "*"
 
     },
     "require-dev": {

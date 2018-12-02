@@ -3,6 +3,7 @@
 namespace frontend\models;
 
 use Yii;
+use yii\helpers\ArrayHelper;
 use yii\db\Expression;
 use yii\behaviors\TimestampBehavior;
 use yii\behaviors\BlameableBehavior;
@@ -148,7 +149,7 @@ class Riskstore extends \yii\db\ActiveRecord
     }
     
 // get โปรแกรมความเสี่ยง
-        public function getProgram() {
+    public function getProgram() {
         return @$this->hasOne(Program::className(), ['program_id' => 'program_id']);
     }
 
@@ -186,5 +187,9 @@ class Riskstore extends \yii\db\ActiveRecord
     public function getOwnername() {
         return @$this->owner->member_name;
     }
+    
+     public static function GetListName(){
+        return ArrayHelper::map(self::find()->all(), 'riskstore_id', 'riskstore_name');
+    } 
 }
 

@@ -5,7 +5,7 @@ $this->title = 'ประวัติการปรับปรุงโปร�
 //$this->params['breadcrumbs'][] = $this->title;
 ?>
     <div class="panel panel-success">
-        <div class="panel-heading"><span class="glyphicon glyphicon-book" aria-hidden="true"></span> ประวัติการปรับปรุงโปรแกรม </div>
+        <div class="panel-heading"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span> ประวัติการปรับปรุงโปรแกรม </div>
         <div class="panel-body">
             <?php foreach ($data_view as $data) { ?>
             <strong><i class="fa fa-bell"></i> <?php echo $data['datetime']; ?></strong> <br>

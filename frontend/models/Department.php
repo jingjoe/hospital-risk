@@ -3,6 +3,7 @@
 namespace frontend\models;
 
 use Yii;
+use yii\helpers\ArrayHelper;
 use yii\db\Expression;
 use yii\behaviors\TimestampBehavior;
 use yii\behaviors\BlameableBehavior;
@@ -89,4 +90,8 @@ class Department extends \yii\db\ActiveRecord
     public function getUpdatename() {
         return @$this->update->username;
     }
+    
+    public static function GetListName(){
+        return ArrayHelper::map(self::find()->all(), 'id', 'depart_name');
+    } 
 }

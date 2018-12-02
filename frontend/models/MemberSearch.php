@@ -18,8 +18,8 @@ class MemberSearch extends Member
     public function rules()
     {
         return [
-            [['id', 'department_id', 'position_id','team_id', 'created_by', 'updated_by'], 'integer'],
-            [['member_name', 'create_date', 'modify_date'], 'safe'],
+            [['id', 'cid','department_id', 'position_id','team_id', 'created_by', 'updated_by'], 'integer'],
+            [['member_name','status', 'create_date', 'modify_date'], 'safe'],
         ];
     }
 
@@ -62,6 +62,9 @@ class MemberSearch extends Member
             'id' => $this->id,
             'department_id' => $this->department_id,
             'position_id' => $this->position_id,
+            'cid' => $this->cid,
+			'team_id' => $this->team_id,
+            'status' => $this->status,
             'create_date' => $this->create_date,
             'modify_date' => $this->modify_date,
             'created_by' => $this->created_by,

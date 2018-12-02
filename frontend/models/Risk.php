@@ -78,7 +78,7 @@ class Risk extends \yii\db\ActiveRecord
             [['image'], 'file',
               'skipOnEmpty' => true,
               'maxFiles' => 3,
-              'extensions' => 'png,jpg,gif'
+              'extensions' => 'png,jpg,jpeg,gif'
             ],
         ];
     }
@@ -311,7 +311,7 @@ class Risk extends \yii\db\ActiveRecord
                 'ไม่ได้' => 'ไม่ได้',
             ),
             'irtype' => array(
-                '1' => 'รายงานต้นเอง',
+                '1' => 'รายงานตนเอง',
                 '2' => 'รายงานผู้อื่น',
             ),
             'affected'=>[

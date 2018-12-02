@@ -21,12 +21,13 @@ AppAsset::register($this);
 <!DOCTYPE html>
 <html lang="<?= Yii::$app->language ?>">
 <head>
-    <link rel="shortcut icon" href="<?php echo Yii::$app->request->baseUrl; ?>/images/favicon.ico" type="image/x-icon" />
     <meta charset="<?= Yii::$app->charset ?>">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="Description" content="Hospital Risk Management System">
+    <meta name="Description" content="Hospital Risk Management System โปรแกรมบริหารความเสี่ยงสำหรับโรงพยาบาล">
     <meta name="KeyWords" content="Risk">
+	<link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
     <?= Html::csrfMetaTags() ?>
     <title><?= Html::encode($this->title) ?></title>
     <?php $this->head() ?>
@@ -64,21 +65,20 @@ AppAsset::register($this);
             $risk_mnu_itms[] = ['label' => '<span class="glyphicon glyphicon-floppy-saved"></span> รายงานความเสี่ยง', 'url' => ['risk/index']];
        
 
-            $help_mnu_itms[] =['label' => '<span class="glyphicon glyphicon-menu-right"></span> ประวัติการปรับปรุงโปรแกรม','url' => ['/historyview/index']];
-            $help_mnu_itms[] =['label' => '<span class="glyphicon glyphicon-menu-right"></span> คู่มือการใช้งาน','url' => ['help/manual']];
-            $help_mnu_itms[] =['label' => '<span class="glyphicon glyphicon-menu-right"></span> ความรู้เรื่องความเสี่ยง','url' => ['help/books']];
-            $help_mnu_itms[] =['label' => '<span class="glyphicon glyphicon-menu-right"></span> ติดต่อ', 'url' => ['/site/about']];
+            $help_mnu_itms[] =['label' => '<span class="glyphicon glyphicon-list-alt"></span> ประวัติการปรับปรุงโปรแกรม','url' => ['/historyview/index']];
+            $help_mnu_itms[] =['label' => '<span class="glyphicon glyphicon-book"></span> คู่มือการใช้งาน','url' => ['help/manual']];
+            $help_mnu_itms[] =['label' => '<span class="glyphicon glyphicon-folder-open"></span> เอกสารวิชาการ\อ้างอิง','url' => ['help/books']];
+            $help_mnu_itms[] =['label' => '<span class="glyphicon glyphicon-phone-alt"></span> ติดต่อ', 'url' => ['/site/about']];
 
             if (!Yii::$app->user->isGuest && Yii::$app->user->identity->role != 99) {
-
-                $risk_mnu_itms[] = ['label' => '<span class="glyphicon glyphicon-thumbs-up"></span> ทบทวนความเสี่ยง', 'url' => ['riskreview/index'],
-                                        'items' => [['label' => 'มี Risk มาถึงคุณ', 'url'=> ['/riskreview/touse']],
-                                                    ['label' => 'มี Risk มาถึงแผนก', 'url'=> ['/riskreview/todep']],
-                                                    ['label' => 'มี Risk มาถึงทีม', 'url'=> ['/riskreview/toteam']],
-                                        ],'visible' => !Yii::$app->user->isGuest && Yii::$app->user->identity->role != 99 
-                                   ];
                 $risk_mnu_itms[] = ['label' => '<span class="glyphicon glyphicon-saved"></span> ตรวจสอบความเสี่ยง', 'url' => ['risk/approve'],'visible' => !Yii::$app->user->isGuest && Yii::$app->user->identity->role != 3 ];
-                
+                $risk_mnu_itms[] = ['label' => '<span class="glyphicon glyphicon-repeat"></span> ทบทวนความเสี่ยง', 'url' => ['riskreview/index'],
+                                        'items' => [['label' => '<span class="glyphicon glyphicon-triangle-right"></span>Risk มาถึงคุณ', 'url'=> ['/riskreview/touse']],
+                                                    ['label' => '<span class="glyphicon glyphicon-triangle-right"></span>Risk มาถึงแผนก', 'url'=> ['/riskreview/todep']],
+                                                    ['label' => '<span class="glyphicon glyphicon-triangle-right"></span>Risk มาถึงทีม', 'url'=> ['/riskreview/toteam']],
+                                                    ['label' => '<span class="glyphicon glyphicon-triangle-right"></span>Risk ที่ผ่านทบทวน', 'url'=> ['/riskreview/index']],
+                                        ],'visible' => !Yii::$app->user->isGuest && Yii::$app->user->identity->role != 99 
+                                   ];    
             }
             $risk_mnu_itms[] = ['label' => '<span class="glyphicon glyphicon-bell"></span> ติดตามความเสี่ยง', 'url' => ['riskregister/follow']];
             $menuItems = [
@@ -110,14 +110,13 @@ AppAsset::register($this);
                         ['label' => '<span class="glyphicon glyphicon-menu-right"></span> คลังความเสี่ยง',  'url' => ['riskstore/index']],
                         ['label' => '<span class="glyphicon glyphicon-menu-right"></span> ที่มาของรายงานความเสี่ยง', 'url' => ['inform/index']],
                         ['label' => '<span class="glyphicon glyphicon-menu-right"></span> ระดับการทบทวน','url' => ['levelwarning/index']], 
-                        ['label' => '<span class="glyphicon glyphicon-menu-right"></span> ประเภทการทบทวน', 'url' => ['reviewtype/index']],
                         ['label' => '<span class="glyphicon glyphicon-menu-right"></span> ผลการทบทวน', 'url' => ['reviewresults/index']],
                         ['label' => '<span class="glyphicon glyphicon-menu-right"></span> สถานที่เกิดความเสี่ยง','url' => ['location/index']],
                         ['label' => '<span class="glyphicon glyphicon-menu-right"></span> สถานะความเสี่ยง', 'url' => ['status/index']],
                 ],
-                    'visible' => !Yii::$app->user->isGuest && Yii::$app->user->identity->isAdmin
+                    'visible' => !Yii::$app->user->isGuest && Yii::$app->user->identity->role == 1
                 ],
-                ['label' => '<span class="glyphicon glyphicon-earphone"></span> ช่วยเหลือ', 'items' => $help_mnu_itms],
+                ['label' => '<span class="glyphicon glyphicon-comment"></span> ช่วยเหลือ', 'items' => $help_mnu_itms],
                 ['label' => '<span class="glyphicon glyphicon-user"></span> ผู้ใช้งาน' . $username, 'items' => $submenuItems],
             ];
    
@@ -147,7 +146,7 @@ AppAsset::register($this);
         $ver = explode(',', $ver);
     ?>
     <?php $visit = Yii::$app->db->createCommand("SELECT COUNT(id) FROM session_frontend_user")->queryScalar(); ?>
-        <h6><p style="text-align:center;">เวอร์ชั่น  <?= $ver[0] ?>  |  ผู้เยี่ยมชม <?= $visit;?> ครั้ง </p></h6>
+        <h6><p style="text-align:center;">เวอร์ชั่น <span class="glyphicon glyphicon-globe"></span> <?= $ver[0] ?>  |  ผู้เยี่ยมชม <span class="glyphicon glyphicon-user"></span> <?= $visit;?> ครั้ง </p></h6>
     </div>
 </div>
 <?php $this->endBody() ?>

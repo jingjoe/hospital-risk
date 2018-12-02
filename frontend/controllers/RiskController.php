@@ -60,7 +60,7 @@ class RiskController extends Controller
         }
         $arr = ['index'];
         if ($role != 99) {
-            $arr = ['index','approve', 'send', 'view', 'create', 'update', 'delete', 'searchrisk'];
+            $arr = ['index','approve', 'send', 'view', 'create', 'update', 'delete', 'searchrisk','report'];
         }
         return [
             'verbs' => [
@@ -74,7 +74,7 @@ class RiskController extends Controller
                 'ruleConfig' => [
                     'class' => AccessRule::className(),
                 ],
-                'only' => ['index', 'view', 'create', 'update', 'delete'],
+                'only' => ['index', 'view', 'create', 'update', 'delete','report'],
                 'rules' => [
                     [
                         'allow' => true,
@@ -201,7 +201,7 @@ class RiskController extends Controller
     }
     
     
- // function ดึงชื่อความเสี่ยง DepDrop 3 ตัวเลือก
+ // function ดึงชื่อความเสี่ยง DepDrop 2 ตัวเลือก
     public function actionGetRisk() {
         $out = [];
         if (isset($_POST['depdrop_parents'])) {
@@ -209,11 +209,13 @@ class RiskController extends Controller
             if ($parents != null) {
                 $program_id = $parents[0];
                 $out = $this->getRisk($program_id );
-                echo Json::encode(['output' => $out, 'selected' => '']);
+                //echo Json::encode(['output' => $out, 'selected' => '']);
+				\Yii::$app->response->data = Json::encode(['output'=>$out, 'selected'=>'']);
                 return;
             }
         }
-        echo Json::encode(['output' => '', 'selected' => '']);
+				//echo Json::encode(['output' => '', 'selected' => '']);
+				\Yii::$app->response->data = Json::encode(['output'=>$out, 'selected'=>'']);
     }
     
     public function actionGetLevel() {
@@ -230,18 +232,16 @@ class RiskController extends Controller
         }
         echo Json::encode(['output'=>'', 'selected'=>'']);
     }
-    
     protected function GetRisk($id) {
         $datas = Riskstore::find()->where(['program_id' => $id])->all();
         return $this->MapData1($datas, 'riskstore_id', 'riskstore_name');
     }
     
-      protected function GetLevel($id) {
+    protected function GetLevel($id) {
         $datas = Level::find()->where(['level_id' => $id])->all();
         return $this->MapData1($datas, 'level_id', 'level_name');
     }
-    
- 
+	
     protected function MapData1($datas, $fieldId, $fieldName) {
         $obj = [];
         foreach ($datas as $key => $value) {
@@ -338,7 +338,7 @@ class RiskController extends Controller
                       inform_id,status_risk,created_by,department_id,updated_by,create_date,
                       modify_date,NOW() AS send_date, '$user' AS send_use,NULL AS register_date,
                       NULL AS note,NULL AS refer_type,NULL AS sendto_team_id,NULL AS sendto_department_id,
-                      NULL AS sendto_member_cid,NULL AS repeat_code,NULL AS url
+                      NULL AS sendto_member_cid,NULL AS repeat_code,NULL AS link_key,NULL AS url
                       FROM risk WHERE id='$id' ")->execute();
 
             $datals = $connection->createCommand("UPDATE risk SET status_risk = 'ตรวจสอบ' WHERE id='$id'")->execute();
@@ -346,6 +346,9 @@ class RiskController extends Controller
             Yii::$app->session->setFlash('success', 'ลงทะเบียนความเสี่ยงเรียบร้อยแล้ว');
                 return $this->redirect(['approve']);
         }     
+    }
+	public function actionReport() {
+        return $this->render('report');
     }
     
 }

@@ -78,14 +78,14 @@ class Riskregister extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id_risk', 'date_report', 'time_report', 'user_ir_type', 'level_id', 'riskstore_id', 'inform_id', 'department_id','register_date'], 'required'],
+            [['id_risk','repeat_code','date_report', 'time_report', 'user_ir_type', 'level_id', 'riskstore_id', 'inform_id', 'department_id','register_date'], 'required'],
             [['id_risk', 'duration_id', 'location_id', 'user_ir', 'program_id', 'riskstore_id', 'inform_id', 'created_by', 'updated_by', 'sendto_team_id'], 'integer'],
             [['affected','date_report', 'time_report', 'create_date', 'modify_date', 'send_date'], 'safe'],
             [['detail', 'detail_hosxp', 'problem_basic','url','refer_type'], 'string'],
             [['user_ir_type'], 'string', 'max' => 50],
             [['level_id'], 'string', 'max' => 2],
             [['edit'], 'string', 'max' => 10],
-            [['status_risk'], 'string', 'max' => 100],
+            [['status_risk','link_key'], 'string', 'max' => 100],
             [['department_id', 'sendto_department_id','repeat_code'], 'string', 'max' => 3],
             [['send_use'], 'string', 'max' => 150],
             [['note'], 'string', 'max' => 255],
@@ -129,7 +129,7 @@ class Riskregister extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => 'ID_Riskregister',
+            'id' => 'ID_Regis',
             'id_risk' => 'ID_Risk',
             'date_report' => 'วันรายงาน',
             'time_report' => 'เวลารายงาน',
@@ -162,6 +162,7 @@ class Riskregister extends \yii\db\ActiveRecord
             'sendto_department_id' => 'ส่งให้แผนก',
             'sendto_member_cid' => 'ส่งให้ผู้รับผิดชอบ',
             'repeat_code' => 'ระดับการทบทวน',
+            'link_key' => 'รหัสลิงค์สำหรับไลน์',
             'url' => 'ลิงค์',
             
         // เพิ่มฟิวล์ใหม่ จาก funtion get  relation
@@ -305,7 +306,7 @@ class Riskregister extends \yii\db\ActiveRecord
                 'ไม่ได้' => 'ไม่ได้',
             ),
             'irtype' => array(
-                '1' => 'รายงานต้นเอง',
+                '1' => 'รายงานตนเอง',
                 '2' => 'รายงานผู้อื่น',
             ),
             'retype' => array(

@@ -16,6 +16,8 @@ use yii\web\UploadedFile;
 
 use dektrium\user\models\User;
 use frontend\models\Reviewresults;
+use frontend\models\Risk;
+use frontend\models\Riskstore;
 
 
 /**
@@ -55,7 +57,7 @@ class Riskreview extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['risk_id', 'riskregister_id', 'reviewresults_id','hits', 'created_by', 'updated_by'], 'integer'],
+            [['risk_id', 'riskregister_id', 'reviewresults_id','hits', 'count','created_by', 'updated_by'], 'integer'],
             [['riskvisit', 'review_date', 'notereview', 'reviewresults_id'], 'required'],
             [['review_cid','review_date', 'review_time', 'create_date', 'modify_date'], 'safe'],
             [['notereview'], 'string'],
@@ -102,15 +104,16 @@ class Riskreview extends \yii\db\ActiveRecord
             'review_cid' => 'ผู้ร่วมทบทวน',
             'repeat' => 'ทบทวนซ้ำ',
             'discharge' => 'จำหน่าย',
-            'status_risk' => 'สถานะความเสี่ยง',
+            'status_risk' => 'สถานะ',
+            'count' =>'จำนวนทบทวน',
             'created_by' => 'บันทึกโดย',
             'updated_by' => 'อับเดทโดย',
             'create_date' => 'วันบันทึก',
             'modify_date' => 'วันปรับปรุง',
             
-        // เพิ่มฟิวล์ใหม่ จาก funtion get  relation          
+        // เพิ่มฟิวล์ใหม่ จาก funtion get  relation    
             'loginname' => 'ชื่อผู้บันทึก',
-            'updatename' => 'ชื่อผู้อับเดท',
+            'updatename' => 'ชื่อผู้ทบทวน',
             'reviewresultsname' => 'ผลการทวบทวน',
            // 'viewusename' => 'ผู้ร่วมทบทวน',
             'download' => ''
@@ -138,13 +141,8 @@ class Riskreview extends \yii\db\ActiveRecord
         } else {
             return false;
         }
-    }
-    
-// ดึงค่า  จาก itemsAlias
+    }     
 
-    
-    
-    
 // get ชื่อผู้บันทึก
     public function getLogin() {
         return @$this->hasOne(User::className(), ['id' => 'created_by']);

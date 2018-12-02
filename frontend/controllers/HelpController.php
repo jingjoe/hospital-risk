@@ -5,16 +5,39 @@ namespace frontend\controllers;
 use Yii;
 use yii\helpers\Url;
 use yii\web\Controller;
+use yii\db\Query;
+use yii\data\ArrayDataProvider;
 
 class HelpController extends Controller {
-
-    public function actionManual($id, $id_risk) {
-        
-        $url_link = Url::to(['riskregister/view', 'id' => $id, 'id_risk' => $id_risk], true);
-        
-        return $this->render('manual', [
-                    'url' => $url_link,
-        ]);
+    
+    public function actionIndex()
+    {
+        return $this->goHome();
     }
 
+// คู่มือการใช้งาน
+    public function actionManual() {
+        return $this->render('index');
+    }
+    
+    public function actionUserkey() {
+        return $this->render('userkey');
+    }
+    
+    public function actionAdminkey() {
+        return $this->render('adminkey');
+    }
+      
+    
+ // เอกสารวิชาการ   
+    public function actionBooks() {
+        return $this->render('index2');
+    }
+    
+    public function actionHandbook() {
+        return $this->render('handbook1');
+    }
+    
+
 }
+
